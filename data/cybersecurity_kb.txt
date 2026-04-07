@@ -1,0 +1,472 @@
+CYBERSECURITY KNOWLEDGE BASE
+Cybersecurity Friend – AI Assistant
+Built-in Reference Document
+==============================================
+
+SECTION 1: PHISHING ATTACKS
+==============================
+
+What is Phishing?
+Phishing is a type of social engineering attack where cybercriminals send fraudulent messages — usually emails — designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.
+
+Types of Phishing:
+- Spear Phishing: Targeted attack against a specific individual or organization using personalized information.
+- Whaling: Phishing directed at high-profile targets like executives or CEOs.
+- Smishing: Phishing conducted via SMS text messages.
+- Vishing: Voice phishing conducted over phone calls.
+- Clone Phishing: An attacker clones a legitimate email and replaces attachments/links with malicious ones.
+
+Signs of a Phishing Email:
+- Urgent or threatening language ("Act now or your account will be suspended")
+- Misspelled domain names (e.g., "paypa1.com" instead of "paypal.com")
+- Generic greetings ("Dear Customer" instead of your name)
+- Unexpected attachments or links
+- Requests for personal information via email
+- Poor grammar or spelling errors
+
+What to Do If You Receive a Phishing Email:
+1. Do NOT click any links or download attachments.
+2. Do NOT reply to the email.
+3. Report the email as phishing in your email client.
+4. If you accidentally clicked a link, change your passwords immediately.
+5. Enable multi-factor authentication (MFA) on your accounts.
+6. Report to your organization's IT department if it's a work email.
+
+What to Do If You Clicked a Phishing Link:
+1. Disconnect your device from the internet immediately.
+2. Run a full antivirus/malware scan.
+3. Change all passwords from a different, clean device.
+4. Enable MFA on all important accounts.
+5. Monitor your bank and credit card accounts for unusual activity.
+6. Report the incident to your bank if financial info was entered.
+
+Prevention:
+- Use email filtering software.
+- Enable spam filters.
+- Train employees to recognize phishing.
+- Use anti-phishing browser extensions.
+- Always verify sender email addresses carefully.
+
+
+SECTION 2: RANSOMWARE
+==============================
+
+What is Ransomware?
+Ransomware is a type of malicious software (malware) that encrypts a victim's files and demands a ransom payment — usually in cryptocurrency — in exchange for the decryption key. It can infect individuals, businesses, hospitals, and government agencies.
+
+How Ransomware Spreads:
+- Phishing emails with malicious attachments (e.g., .docx, .exe, .zip)
+- Drive-by downloads from compromised websites
+- Remote Desktop Protocol (RDP) vulnerabilities
+- Unpatched software vulnerabilities
+- Malicious USB drives
+
+Famous Ransomware Attacks:
+- WannaCry (2017): Affected 200,000 computers in 150 countries using EternalBlue exploit.
+- NotPetya (2017): Posed as ransomware but was actually destructive malware.
+- REvil: A ransomware-as-a-service (RaaS) group targeting large corporations.
+- Colonial Pipeline (2021): Forced shutdown of major US fuel pipeline.
+
+Signs Your System is Infected with Ransomware:
+- Files are suddenly renamed with unfamiliar extensions (e.g., .locked, .encrypted)
+- You cannot open normal files
+- A ransom note appears on your desktop
+- Your computer is extremely slow
+- Antivirus software is disabled
+
+What to Do If Infected with Ransomware:
+1. IMMEDIATELY disconnect the infected device from all networks (WiFi, LAN, USB).
+2. Do NOT pay the ransom — it does not guarantee data recovery and funds criminals.
+3. Report the attack to law enforcement (FBI's IC3 at ic3.gov).
+4. Contact your IT security team.
+5. Restore files from clean backups if available.
+6. Use decryption tools if available (check nomoreransom.org).
+7. Format and reinstall the operating system as a last resort.
+
+Prevention:
+- Maintain regular, offline backups (3-2-1 rule: 3 copies, 2 different media, 1 offsite).
+- Keep operating system and software updated.
+- Use reputable antivirus/anti-malware software.
+- Disable RDP if not needed; use VPN with MFA if needed.
+- Restrict user privileges (principle of least privilege).
+- Block suspicious email attachments.
+
+
+SECTION 3: MAN-IN-THE-MIDDLE (MITM) ATTACK
+==============================
+
+What is a Man-in-the-Middle Attack?
+A Man-in-the-Middle (MITM) attack occurs when an attacker secretly intercepts and potentially alters communications between two parties who believe they are directly communicating with each other. The attacker can eavesdrop, steal data, or inject malicious content.
+
+Common MITM Techniques:
+- ARP Spoofing/Poisoning: Attacker sends fake ARP messages to link their MAC address with a legitimate IP.
+- DNS Spoofing: Corrupting DNS cache to redirect users to malicious websites.
+- SSL Stripping: Downgrading HTTPS connections to HTTP to intercept encrypted data.
+- Wi-Fi Eavesdropping: Creating rogue Wi-Fi hotspots to intercept traffic.
+- Session Hijacking: Stealing session cookies to impersonate authenticated users.
+
+Signs You May Be a MITM Victim:
+- Sudden certificate warnings in your browser (SSL errors)
+- Slow internet connection
+- Being redirected to unfamiliar websites
+- Unexpected logouts from services
+
+What to Do:
+1. Avoid using public Wi-Fi for sensitive activities.
+2. Use a VPN when on public networks.
+3. Always verify HTTPS (look for the padlock icon in your browser).
+4. Do not ignore certificate warnings — these are RED FLAGS.
+5. Use end-to-end encrypted communication tools.
+6. Enable MFA on all accounts.
+
+Prevention:
+- Use HTTPS everywhere (install browser extensions like HTTPS Everywhere).
+- Use a trusted VPN service.
+- Use WPA3 encryption on your Wi-Fi network.
+- Avoid connecting to unknown or public Wi-Fi networks.
+- Use DNS over HTTPS (DoH) or DNS over TLS (DoT).
+
+
+SECTION 4: SQL INJECTION
+==============================
+
+What is SQL Injection?
+SQL Injection (SQLi) is a web security vulnerability that allows attackers to interfere with the queries an application makes to its database. Attackers can view data they are not supposed to access, modify or delete data, and in some cases, execute operating system commands.
+
+How SQL Injection Works:
+An attacker inserts malicious SQL code into an input field (like a login form) that is then executed by the database. For example, entering ' OR '1'='1 into a username field might bypass login authentication.
+
+Types of SQL Injection:
+- Classic/In-band SQLi: Results are returned directly in the HTTP response.
+- Blind SQLi: No data is returned; attacker infers information from the application's behavior.
+- Time-based SQLi: Attacker uses database time delays to infer information.
+- Out-of-band SQLi: Data is exfiltrated through a different channel.
+
+Impact:
+- Complete database compromise
+- Unauthorized access to admin credentials
+- Data theft (personal info, credit cards, passwords)
+- Financial loss and regulatory fines
+
+Prevention:
+- Use parameterized queries / prepared statements.
+- Use an ORM (Object Relational Mapper).
+- Validate and sanitize all user inputs.
+- Apply the principle of least privilege to database accounts.
+- Use a Web Application Firewall (WAF).
+- Regularly scan applications for SQL injection vulnerabilities.
+
+
+SECTION 5: DENIAL OF SERVICE (DoS) AND DDoS ATTACKS
+==============================
+
+What is a DoS Attack?
+A Denial of Service (DoS) attack aims to make a machine, network, or service unavailable to legitimate users by overwhelming it with traffic or requests until it crashes or becomes too slow to use.
+
+What is DDoS?
+A Distributed Denial of Service (DDoS) attack uses multiple compromised computers (botnets) to launch a coordinated attack, making it much harder to block.
+
+Types of DDoS Attacks:
+- Volumetric Attacks: Flood the network with massive traffic (e.g., UDP floods).
+- Protocol Attacks: Exploit network protocol weaknesses (e.g., SYN floods, Ping of Death).
+- Application Layer Attacks: Target web servers with legitimate-looking HTTP requests (e.g., HTTP floods, Slowloris).
+
+Signs of a DDoS Attack:
+- Website is unreachable or extremely slow
+- Unusually slow network performance
+- Inability to access services
+- Spike in inbound traffic from multiple sources
+
+What to Do During a DDoS Attack:
+1. Contact your Internet Service Provider (ISP) immediately.
+2. Activate DDoS protection/mitigation services.
+3. Use traffic filtering/rate limiting at firewall level.
+4. Enable Content Delivery Network (CDN) protection.
+5. Block suspicious IP addresses.
+6. Notify affected users.
+
+Prevention:
+- Use a CDN with DDoS protection (e.g., Cloudflare).
+- Configure firewalls and intrusion prevention systems (IPS).
+- Implement rate limiting.
+- Use anti-DDoS services.
+- Keep systems patched and updated.
+
+
+SECTION 6: SOCIAL ENGINEERING
+==============================
+
+What is Social Engineering?
+Social engineering is the psychological manipulation of people into performing actions or divulging confidential information. It exploits human psychology rather than technical vulnerabilities.
+
+Common Social Engineering Tactics:
+- Pretexting: Creating a fabricated scenario to extract information (e.g., impersonating IT support).
+- Baiting: Luring victims with something attractive (e.g., free USB drives with malware).
+- Quid Pro Quo: Offering something in exchange for information (e.g., fake tech support calls).
+- Tailgating: Physically following an authorized person into a restricted area.
+- Scareware: Frightening users into believing their system is infected to sell fake tools.
+
+Red Flags of Social Engineering:
+- Unexpected phone calls asking for passwords or personal info
+- Someone offering help you didn't ask for
+- Creating urgency ("your account will be deleted in 24 hours")
+- Requests to bypass normal security procedures
+- Claims of authority without verification
+
+What to Do:
+1. Always verify the identity of anyone requesting sensitive information.
+2. Never share passwords, even with people claiming to be IT staff.
+3. Hang up unsolicited callers and call back using official numbers.
+4. Report suspicious contacts to your security team.
+5. When in doubt, say NO and verify.
+
+Prevention:
+- Security awareness training for all employees.
+- Clear policies for sharing sensitive information.
+- Verification procedures before granting access.
+- Regular phishing simulation exercises.
+
+
+SECTION 7: MALWARE
+==============================
+
+What is Malware?
+Malware (malicious software) is any software intentionally designed to cause damage to a computer, server, network, or user. It includes various types of harmful programs.
+
+Types of Malware:
+- Virus: Attaches itself to clean files and spreads when executed.
+- Worm: Self-replicates and spreads across networks without user action.
+- Trojan: Disguises itself as legitimate software to install malware.
+- Spyware: Secretly monitors user activity and collects data.
+- Adware: Displays unwanted advertisements; may also track behavior.
+- Keylogger: Records keystrokes to steal passwords and sensitive data.
+- Rootkit: Hides deep in the OS to give attackers persistent access.
+- Botnet: Network of infected computers controlled by an attacker.
+
+Signs of Malware Infection:
+- Computer runs slowly or crashes frequently
+- Unexpected pop-up advertisements
+- Programs opening or closing on their own
+- Browser homepage changed without permission
+- Unexpected network activity or data usage
+- Files disappearing or being modified
+- Antivirus software is disabled
+
+What to Do If Infected:
+1. Disconnect from the internet immediately.
+2. Run a full system scan using reputable antivirus software.
+3. Boot into Safe Mode if normal scan fails.
+4. Remove identified threats and quarantined files.
+5. Change all passwords from a clean device after removal.
+6. Restore system from a clean backup if necessary.
+7. Update all software and operating systems.
+
+Prevention:
+- Keep OS and all software up to date.
+- Use reputable antivirus and anti-malware software.
+- Do not download software from untrusted sources.
+- Be cautious with email attachments and links.
+- Use a firewall.
+- Regularly scan your system.
+
+
+SECTION 8: PASSWORD ATTACKS
+==============================
+
+Types of Password Attacks:
+- Brute Force: Systematically tries every possible combination of characters.
+- Dictionary Attack: Uses a precompiled list of common words and passwords.
+- Credential Stuffing: Uses stolen username/password pairs from other breaches.
+- Rainbow Table Attack: Uses precomputed hash values to crack password hashes.
+- Shoulder Surfing: Physically observing someone entering their password.
+- Password Spraying: Tries a few common passwords across many accounts.
+
+Signs of a Password Attack:
+- Multiple failed login attempts on your account
+- Receiving unexpected password reset emails
+- Unexpected account activity or logins from unfamiliar locations
+
+What to Do:
+1. Enable multi-factor authentication (MFA) immediately.
+2. Change your password to a strong, unique one.
+3. Check your account for unauthorized activity.
+4. Revoke any unauthorized sessions or tokens.
+5. Use a password manager.
+6. Enable login alerts/notifications.
+
+Creating Strong Passwords:
+- Minimum 12–16 characters
+- Mix of uppercase, lowercase, numbers, and symbols
+- Avoid dictionary words, names, or common patterns
+- Never reuse passwords across sites
+- Use a password manager (e.g., Bitwarden, 1Password)
+
+Multi-Factor Authentication (MFA):
+MFA adds an extra layer of security by requiring a second verification step beyond your password. Options include:
+- SMS OTP (one-time password) – least secure
+- Authenticator apps (Google Authenticator, Authy) – more secure
+- Hardware security keys (YubiKey) – most secure
+
+
+SECTION 9: ZERO-DAY EXPLOITS
+==============================
+
+What is a Zero-Day Exploit?
+A zero-day exploit is an attack that targets a software vulnerability that is unknown to the software vendor or has not yet been patched. The term "zero-day" means developers have had zero days to fix the flaw.
+
+Why Zero-Days Are Dangerous:
+- No patch exists at the time of attack
+- Traditional signature-based antivirus cannot detect them
+- High value on cybercriminal markets
+- Often used in advanced persistent threats (APTs) and nation-state attacks
+
+How to Reduce Zero-Day Risk:
+1. Keep all software and OS updated (patches reduce the attack surface).
+2. Use behavior-based security tools that detect anomalies.
+3. Apply the principle of least privilege.
+4. Use network segmentation.
+5. Monitor system logs for unusual activity.
+6. Subscribe to threat intelligence feeds (CISA, US-CERT).
+
+
+SECTION 10: INSIDER THREATS
+==============================
+
+What is an Insider Threat?
+An insider threat is a security risk that originates from within the organization — typically by employees, former employees, contractors, or business partners who have authorized access to systems.
+
+Types:
+- Malicious Insider: Deliberately steals or damages data for personal gain or revenge.
+- Careless Insider: Accidentally causes a breach through negligence (e.g., losing a laptop).
+- Compromised Insider: An employee whose credentials are stolen by an outsider.
+
+Signs of Insider Threat:
+- Excessive access to files outside normal job responsibilities
+- Downloading or transferring large amounts of data
+- Accessing systems at unusual hours
+- Expressing dissatisfaction or resentment toward the organization
+
+Prevention:
+- Implement the principle of least privilege (users only access what they need).
+- Monitor user activity and access logs.
+- Conduct background checks during hiring.
+- Implement data loss prevention (DLP) tools.
+- Create a clear offboarding process for departing employees.
+- Foster a positive work culture.
+
+
+SECTION 11: CYBERSECURITY BEST PRACTICES
+==============================
+
+General Best Practices for Everyone:
+1. Use strong, unique passwords for every account.
+2. Enable multi-factor authentication (MFA) wherever possible.
+3. Keep all devices, software, and apps updated.
+4. Use a reputable antivirus and keep it updated.
+5. Be skeptical of unsolicited emails, calls, and messages.
+6. Backup your data regularly (follow 3-2-1 rule).
+7. Use a VPN when on public Wi-Fi.
+8. Lock your screen when stepping away from your computer.
+9. Be careful what you share on social media (attackers use this for spear phishing).
+10. Report suspicious activity to your IT/security team immediately.
+
+For Organizations:
+- Conduct regular security awareness training.
+- Perform penetration testing and vulnerability assessments.
+- Develop and test an incident response plan.
+- Implement network monitoring and intrusion detection systems.
+- Apply data encryption both in transit and at rest.
+- Ensure vendor/supply chain security compliance.
+- Comply with regulations (GDPR, HIPAA, PCI-DSS) relevant to your industry.
+
+
+SECTION 12: INCIDENT RESPONSE
+==============================
+
+What is Incident Response?
+Incident response (IR) is the organized approach to addressing and managing the aftermath of a security breach or cyberattack. The goal is to minimize damage and reduce recovery time and costs.
+
+Incident Response Steps (NIST Framework):
+1. Preparation: Establish IR team, policies, and tools before an incident occurs.
+2. Identification: Detect and verify that a security incident has occurred.
+3. Containment: Isolate affected systems to prevent further damage.
+4. Eradication: Remove the root cause (malware, unauthorized access, etc.).
+5. Recovery: Restore systems to normal operations from clean backups.
+6. Lessons Learned: Document findings and improve defenses.
+
+Who to Contact During a Cyberattack:
+- Your organization's IT/security team
+- Law enforcement (FBI's IC3 at ic3.gov for US)
+- CISA (Cybersecurity and Infrastructure Security Agency)
+- National Cyber Security Centre (NCSC) if in UK
+- Your cyber insurance provider
+
+
+SECTION 13: NETWORK SECURITY
+==============================
+
+Firewall:
+A firewall is a network security device that monitors and controls incoming and outgoing network traffic based on predetermined security rules. It acts as a barrier between trusted and untrusted networks.
+
+Types:
+- Packet filtering firewall
+- Stateful inspection firewall
+- Application layer (proxy) firewall
+- Next-generation firewall (NGFW)
+
+VPN (Virtual Private Network):
+A VPN encrypts your internet connection and masks your IP address, making it harder for attackers to intercept your traffic. Recommended when:
+- Using public Wi-Fi
+- Accessing company resources remotely
+- Wanting to protect your privacy
+
+Intrusion Detection System (IDS) vs Intrusion Prevention System (IPS):
+- IDS: Monitors network traffic and alerts administrators about suspicious activity.
+- IPS: Monitors and actively blocks detected threats in real time.
+
+Network Segmentation:
+Dividing a network into smaller zones to limit the spread of breaches. If one segment is compromised, others remain protected.
+
+
+SECTION 14: DATA PRIVACY AND COMPLIANCE
+==============================
+
+Key Regulations:
+- GDPR (General Data Protection Regulation): EU law protecting personal data of EU citizens.
+- HIPAA (Health Insurance Portability and Accountability Act): US law protecting health information.
+- PCI-DSS (Payment Card Industry Data Security Standard): Standards for organizations handling credit cards.
+- CCPA (California Consumer Privacy Act): Rights for California residents regarding personal data.
+
+Data Protection Principles:
+1. Collect only the data you need (data minimization).
+2. Store data securely and encrypted.
+3. Define clear data retention policies.
+4. Report data breaches promptly (GDPR requires 72-hour notification).
+5. Give users rights to access, correct, and delete their data.
+
+
+SECTION 15: SAFE BROWSING HABITS
+==============================
+
+Safe Browsing Tips:
+- Always look for HTTPS and the padlock icon before entering credentials.
+- Do not download files from untrusted websites.
+- Use browser extensions like uBlock Origin for ad/malware blocking.
+- Keep your browser updated.
+- Use a private/incognito window when using shared computers.
+- Verify URLs carefully before clicking (check for typosquatting).
+- Avoid clicking on pop-ups or banner ads.
+
+Recognizing Fake Websites:
+- URL is slightly different from the real site (e.g., "faceb00k.com")
+- Missing HTTPS
+- Poor design or spelling errors
+- Unusual payment methods requested
+- No contact information or privacy policy
+
+What to Do If You Entered Info on a Fake Site:
+1. Change the password for the affected account immediately.
+2. Change that same password on any other site where you used it.
+3. Monitor your bank account if financial info was entered.
+4. Enable MFA on affected accounts.
+5. Run an antivirus scan on your device.

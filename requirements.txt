@@ -1,0 +1,35 @@
+# Cybersecurity Friend – AI Assistant
+# Python dependencies
+# Install with: pip install -r requirements.txt
+
+# ─── LangChain Core ───────────────────────────────
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+
+# ─── LangChain Integrations ───────────────────────
+langchain-huggingface       # HuggingFace embeddings
+langchain-google-genai      # Google Gemini LLM
+
+# ─── Embeddings & Vector Store ────────────────────
+sentence-transformers       # all-MiniLM-L6-v2 model
+faiss-cpu                   # FAISS (CPU only - no GPU needed)
+
+# ─── Google Gemini ────────────────────────────────
+google-generativeai
+
+# ─── Document Loading ─────────────────────────────
+pypdf                       # PDF loading support
+
+# ─── News API ─────────────────────────────────────
+requests                    # HTTP calls to NewsAPI
+
+# ─── Environment Variables ────────────────────────
+python-dotenv               # Load .env file
+
+# ─── (Optional) For progress bars ────────────────
+tqdm
+
+# ─── Streamlit UI ─────────────────────────────────
+streamlit

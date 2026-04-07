@@ -1,0 +1,100 @@
+[
+  {
+    "k": 1,
+    "chunks_retrieved": 1,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing attacks, it's essential to be cautious when receiving emails or messages that ask for sensitive information. Here are some steps you can take:\n\n1. **Verify the sender**: Check if the email is from a legitimate source by looking at the sender's email address. Scammers often use fake email addresses that may look similar to those used by legitimate companies.\n2. **Be wary of urgent requests**: Phishing emails often create a sense of urgency to prompt you into taking action quickly. Be cautious of emails that ask you to act immediately or risk losing access to an account or service.\n3. **Check for spelling and grammar mistakes**: Legitimate companies usually have professional emails with no spelling or grammar errors. Phishing emails may contain mistakes, which can be a red flag.\n4. **Never click on suspicious links or download attachments**: Avoid clicking on links or downloading attachments from unknown sources, as they may contain malware or lead to phishing websites.\n5. **Use two-factor authentication**: Enable two-factor authentication (2FA) whenever possible, which adds an extra layer of security to your accounts.\n\nBy being aware of these tactics and taking the necessary precautions, you can significantly reduce the risk of falling victim to phishing attacks.",
+    "response_length": 1659,
+    "response_time_seconds": 1.37,
+    "error": null
+  },
+  {
+    "k": 2,
+    "chunks_retrieved": 2,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, it's essential to be cautious when receiving emails or messages that ask for sensitive information. Here are some key points to keep in mind:\n\n- Be wary of emails that create a sense of urgency or threaten to close your account if you don't respond immediately.\n- Never click on links or download attachments from unfamiliar senders.\n- Verify the authenticity of the message by contacting the entity directly through a known contact method.\n- Keep your antivirus and malware protection up to date.\n- Use strong, unique passwords and enable multi-factor authentication (MFA) on your accounts.\n\nBy being aware of these tactics and taking proactive steps, you can significantly reduce the risk of falling victim to a phishing attack.",
+    "response_length": 1108,
+    "response_time_seconds": 1.05,
+    "error": null
+  },
+  {
+    "k": 3,
+    "chunks_retrieved": 3,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi...",
+      "Chunk 3: Prevention:\n- Use email filtering software.\n- Enable spam filters.\n- Train employees to recognize phishing.\n- Use anti-p..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, you can take several steps:\n\n1. Use email filtering software and enable spam filters to help block suspicious emails.\n2. Train yourself to recognize phishing attempts by being cautious of emails that ask for sensitive information or have suspicious sender email addresses.\n3. Use anti-phishing browser extensions to add an extra layer of protection.\n4. Always verify sender email addresses carefully to ensure they are legitimate.\n5. Be cautious when clicking on links or providing personal information online, and never provide sensitive information in response to an unsolicited email.\n\nBy taking these steps, you can significantly reduce the risk of falling victim to a phishing attack.",
+    "response_length": 1067,
+    "response_time_seconds": 1.06,
+    "error": null
+  },
+  {
+    "k": 4,
+    "chunks_retrieved": 4,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi...",
+      "Chunk 3: Prevention:\n- Use email filtering software.\n- Enable spam filters.\n- Train employees to recognize phishing.\n- Use anti-p...",
+      "Chunk 4: What to Do If You Receive a Phishing Email:\n1. Do NOT click any links or download attachments.\n2. Do NOT reply to the em..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, you can take the following steps:\n\n- Use email filtering software and enable spam filters to reduce the number of phishing emails you receive.\n- Train yourself to recognize phishing attempts by being cautious of emails that ask for sensitive information or have suspicious sender email addresses.\n- Use anti-phishing browser extensions to add an extra layer of protection.\n- Always verify sender email addresses carefully to ensure they are legitimate.\n\nBy being aware of these tactics and taking proactive measures, you can significantly reduce the risk of falling victim to a phishing attack.",
+    "response_length": 972,
+    "response_time_seconds": 0.96,
+    "error": null
+  },
+  {
+    "k": 5,
+    "chunks_retrieved": 5,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi...",
+      "Chunk 3: Prevention:\n- Use email filtering software.\n- Enable spam filters.\n- Train employees to recognize phishing.\n- Use anti-p...",
+      "Chunk 4: What to Do If You Receive a Phishing Email:\n1. Do NOT click any links or download attachments.\n2. Do NOT reply to the em...",
+      "Chunk 5: Types of Phishing:\n- Spear Phishing: Targeted attack against a specific individual or organization using personalized in..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, you can take several steps:\n\n1. Use email filtering software and enable spam filters to help block suspicious emails.\n2. Train yourself to recognize phishing attempts by being cautious of emails that ask for sensitive information or have suspicious links and attachments.\n3. Use anti-phishing browser extensions to add an extra layer of protection.\n4. Always verify sender email addresses carefully to ensure they are legitimate.\n5. Enable multi-factor authentication (MFA) on your important accounts to add an extra layer of security.\n\nBy taking these steps, you can significantly reduce the risk of falling victim to a phishing attack.",
+    "response_length": 1015,
+    "response_time_seconds": 1.04,
+    "error": null
+  },
+  {
+    "k": 6,
+    "chunks_retrieved": 6,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi...",
+      "Chunk 3: Prevention:\n- Use email filtering software.\n- Enable spam filters.\n- Train employees to recognize phishing.\n- Use anti-p...",
+      "Chunk 4: What to Do If You Receive a Phishing Email:\n1. Do NOT click any links or download attachments.\n2. Do NOT reply to the em...",
+      "Chunk 5: Types of Phishing:\n- Spear Phishing: Targeted attack against a specific individual or organization using personalized in...",
+      "Chunk 6: Prevention:\n- Security awareness training for all employees.\n- Clear policies for sharing sensitive information.\n- Verif..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, you can take several steps:\n\n1. Use email filtering software and enable spam filters to help block phishing emails.\n2. Train yourself to recognize phishing attempts by being cautious of emails that ask for sensitive information or have suspicious links and attachments.\n3. Use anti-phishing browser extensions to add an extra layer of protection.\n4. Always verify sender email addresses carefully to ensure they are legitimate.\n5. Enable multi-factor authentication (MFA) on your important accounts to add an extra layer of security.\n\nBy following these steps, you can significantly reduce the risk of falling victim to phishing attacks.",
+    "response_length": 1015,
+    "response_time_seconds": 1.06,
+    "error": null
+  },
+  {
+    "k": 7,
+    "chunks_retrieved": 7,
+    "chunks_preview": [
+      "Chunk 1: SECTION 1: PHISHING ATTACKS\n==============================\n\nWhat is Phishing?\nPhishing is a type of social engineering a...",
+      "Chunk 2: What to Do If You Clicked a Phishing Link:\n1. Disconnect your device from the internet immediately.\n2. Run a full antivi...",
+      "Chunk 3: Prevention:\n- Use email filtering software.\n- Enable spam filters.\n- Train employees to recognize phishing.\n- Use anti-p...",
+      "Chunk 4: What to Do If You Receive a Phishing Email:\n1. Do NOT click any links or download attachments.\n2. Do NOT reply to the em...",
+      "Chunk 5: Types of Phishing:\n- Spear Phishing: Targeted attack against a specific individual or organization using personalized in...",
+      "Chunk 6: Prevention:\n- Security awareness training for all employees.\n- Clear policies for sharing sensitive information.\n- Verif...",
+      "Chunk 7: Signs of a Phishing Email:\n- Urgent or threatening language (\"Act now or your account will be suspended\")\n- Misspelled d..."
+    ],
+    "response": "Phishing is a type of social engineering attack where cybercriminals send fraudulent messages, usually emails, designed to trick recipients into revealing sensitive information such as passwords, credit card numbers, or personal data. The attacker disguises themselves as a trustworthy entity like a bank, tech company, or government agency.\n\nTo protect yourself from phishing, you can take several steps:\n\n1. Use email filtering software and enable spam filters to help block suspicious emails.\n2. Train yourself to recognize phishing attempts by looking out for signs such as urgent or threatening language, misspelled domain names, generic greetings, unexpected attachments or links, and requests for personal information via email.\n3. Always verify sender email addresses carefully and be cautious when clicking on links or downloading attachments from unknown senders.\n4. Use anti-phishing browser extensions to add an extra layer of protection.\n5. Enable multi-factor authentication (MFA) on your important accounts to make it more difficult for attackers to gain access, even if they obtain your password.\n\nBy being aware of these tactics and taking proactive steps, you can significantly reduce the risk of falling victim to phishing attacks.",
+    "response_length": 1250,
+    "response_time_seconds": 1.2,
+    "error": null
+  }
+]
