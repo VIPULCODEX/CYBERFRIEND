@@ -476,51 +476,50 @@ if st.session_state.show_animation:
         Object.assign(overlay.style, {{
             position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
             zIndex: '999999', pointerEvents: 'none', overflow: 'hidden',
-            backgroundColor: 'rgba(0,0,0,0.3)', transition: 'opacity 1s ease-out'
+            backgroundColor: 'rgba(0,0,0,0.5)', transition: 'opacity 1.5s ease-out'
         }});
         window.parent.document.body.appendChild(overlay);
 
         function createParticle(content, cssProps, keyframes, duration) {{
             const p = window.parent.document.createElement("div");
             p.innerHTML = content;
-            Object.assign(p.style, {{ position: 'absolute', fontSize: '4rem', ...cssProps }});
+            Object.assign(p.style, {{ position: 'absolute', ...cssProps }});
             overlay.appendChild(p);
             p.animate(keyframes, {{ duration: duration, easing: 'ease-out', fill: 'forwards' }});
         }}
 
-        // Only Matrix animation remains
-        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF';
-        const numColumns = 50;
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF<>+=/*';
+        const numColumns = 60;
         for(let i=0; i<numColumns; i++) {{
             let colStr = '';
-            const length = 30 + Math.floor(Math.random() * 30);
+            const length = 25 + Math.floor(Math.random() * 35);
             for(let j=0; j<length; j++) {{
                 colStr += chars[Math.floor(Math.random() * chars.length)] + '<br>';
             }}
             
             const isFalling = (i % 2 === 0);
-            const startY = isFalling ? '-100vh' : '110vh';
-            const endY = isFalling ? '200vh' : '-200vh'; 
+            const startY = isFalling ? '-120vh' : '120vh';
+            const endY = isFalling ? '240vh' : '-240vh'; 
             
             createParticle(colStr, {{ 
                 left: (i * (100 / numColumns)) + '%', 
                 top: startY, 
                 color: '#00ff41', 
                 fontFamily: '"Share Tech Mono", monospace', 
-                fontSize: '1.2rem', 
+                fontSize: (0.8 + Math.random()*0.8) + 'rem', 
                 lineHeight: '1.0',
                 textAlign: 'center',
-                textShadow: '0 0 5px #00ff41, 0 0 10px #00cc33',
-                opacity: 0.6 + Math.random()*0.4
+                textShadow: '0 0 8px #00ff41, 0 0 15px #00cc33',
+                opacity: 0.5 + Math.random()*0.5
             }}, [
                 {{ transform: 'translateY(0)' }},
                 {{ transform: `translateY(${{endY}})` }}
-            ], 5000);
+            ], 4000 + Math.random()*2000);
         }}
 
         setTimeout(() => {{
             overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 1000);
+            setTimeout(() => overlay.remove(), 1500);
         }}, 5000);
     </script>
     """
