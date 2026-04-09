@@ -83,6 +83,10 @@ MATRIX_STYLE_BASE = """
 [data-testid="stSidebar"] {
     background-color: #030f03 !important;
     border-right: 1px solid #00ff4133 !important;
+    overflow-x: hidden !important;
+}
+[data-testid="stSidebar"] > div {
+    overflow-x: hidden !important;
 }
 [data-testid="stSidebar"] * {
     color: #00ff41 !important;
@@ -377,6 +381,39 @@ header { background-color: transparent !important; }
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb { background: #00ff4144; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #00ff41; }
+
+/* ── Responsive adjustments ── */
+@media (max-width: 768px) {
+    .cyber-header h1 {
+        font-size: 1.5rem !important;
+        letter-spacing: 2px !important;
+    }
+    .cyber-header p {
+        font-size: 0.65rem !important;
+        letter-spacing: 1px !important;
+    }
+    .main .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+        padding-top: 0.5rem !important;
+    }
+    .msg-user {
+        max-width: 95% !important;
+        padding: 8px 12px !important;
+    }
+    .msg-bot, .attack-card, .news-card {
+        max-width: 100% !important;
+        padding: 10px 14px !important;
+        font-size: 0.8rem !important;
+    }
+    .sidebar-title {
+        font-size: 0.8rem !important;
+        letter-spacing: 1.5px !important;
+    }
+    [data-testid="stMetricValue"] {
+        font-size: 1rem !important;
+    }
+}
 </style>
 
 <!-- Scanline overlay -->
