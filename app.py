@@ -731,7 +731,7 @@ if not st.session_state.pipeline_ready:
 # ════════════════════════════════════════════════════════════════
 #  CHAT HISTORY DISPLAY
 # ════════════════════════════════════════════════════════════════
-tab1, tab2, tab3 = st.tabs(["💬 Chat & Intel", "🔍 System Analysis", "🏗️ System Architecture"])
+tab1, tab2 = st.tabs(["💬 Chat & Intel", "🔍 System Analysis"])
 
 with tab1:
     if not st.session_state.messages:
