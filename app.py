@@ -35,11 +35,19 @@ st.set_page_config(
 #  THEMES CONFIGURATION
 # ════════════════════════════════════════════════════════════════
 THEMES = {
-    "Matrix (Green)": { "P": "#00ff41", "S": "#00cc33", "UBG": "#00140a", "BBG": "#000d05", "T": "#b3ffcc", "A": "#ff4d00", "AT": "#ffb380", "CBG": "#030f03", "BG": "#000000" }
+    "QuantX Premium": { 
+        "P": "#00FF9F",   # Primary Neon Green
+        "S": "#00CFFF",   # Secondary Electric Blue
+        "A": "#FF004D",   # Accent Pink/Red
+        "BG": "#020202",  # Background
+        "UBG": "rgba(0, 255, 159, 0.05)", 
+        "BBG": "rgba(0, 207, 255, 0.05)",
+        "T": "#E0E0E0" 
+    }
 }
 
 if "theme" not in st.session_state:
-    st.session_state.theme = "Matrix (Green)"
+    st.session_state.theme = "QuantX Premium"
 
 # ════════════════════════════════════════════════════════════════
 #  MATRIX / DARK-WEB CSS + CANVAS RAIN ANIMATION
@@ -55,8 +63,8 @@ MATRIX_STYLE_BASE = """
 
 /* ── App background ── */
 .stApp {
-    background-color: #000000 !important;
-    color: #00ff41 !important;
+    background-color: #020202 !important;
+    color: #E0E0E0 !important;
     font-family: 'Share Tech Mono', 'Noto Color Emoji', monospace !important;
 }
 
@@ -100,13 +108,17 @@ MATRIX_STYLE_BASE = """
     font-family: 'Orbitron', monospace;
 }
 .cyber-header h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 900;
-    color: #00ff41;
-    text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff4177, 0 0 80px #00ff4133;
-    letter-spacing: 4px;
+    color: #00FF9F;
+    text-shadow: 0 0 15px rgba(0, 255, 159, 0.7), 0 0 30px rgba(0, 255, 159, 0.3);
+    letter-spacing: 6px;
     text-transform: uppercase;
-    animation: flicker 4s infinite;
+    animation: neonPulse 3s infinitealternate;
+}
+@keyframes neonPulse {
+    from { text-shadow: 0 0 10px rgba(0, 255, 159, 0.5); }
+    to { text-shadow: 0 0 25px rgba(0, 255, 159, 0.8), 0 0 45px rgba(0, 255, 159, 0.4); }
 }
 .cyber-header p {
     color: #00cc33;
@@ -141,91 +153,104 @@ MATRIX_STYLE_BASE = """
     z-index: 0;
 }
 
+/* ── Glassmorphism Utility ── */
+.glass-card {
+    background: rgba(10, 10, 20, 0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(0, 255, 159, 0.1) !important;
+    border-radius: 12px !important;
+}
+
 /* ── Chat container ── */
 .chat-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     margin-bottom: 1rem;
 }
 
 /* ── User message bubble ── */
 .msg-user {
     align-self: flex-end;
-    background: #00140a;
-    border: 1px solid #00ff4166;
-    border-radius: 6px 0 6px 6px;
-    padding: 10px 16px;
-    max-width: 80%;
-    color: #00ff41;
+    background: rgba(0, 207, 255, 0.08) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 207, 255, 0.2) !important;
+    border-radius: 12px 12px 0 12px;
+    padding: 12px 18px;
+    max-width: 85%;
+    color: #00CFFF;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.88rem;
-    box-shadow: 0 0 10px #00ff4122;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0, 207, 255, 0.05);
     position: relative;
+    transition: all 0.3s ease;
 }
 .msg-user::before {
-    content: '> YOU';
+    content: '> OPERATOR';
     display: block;
-    color: #00ff4199;
-    font-size: 0.7rem;
+    color: rgba(0, 207, 255, 0.6);
+    font-size: 0.65rem;
+    font-weight: bold;
     letter-spacing: 2px;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 /* ── Assistant message bubble ── */
 .msg-bot {
     align-self: flex-start;
-    background: #000d05;
-    border: 1px solid #00cc3355;
-    border-left: 3px solid #00ff41;
-    border-radius: 0 6px 6px 6px;
-    padding: 14px 18px;
+    background: rgba(0, 255, 159, 0.05) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 255, 159, 0.15) !important;
+    border-left: 3px solid #00FF9F !important;
+    border-radius: 12px 12px 12px 0;
+    padding: 16px 22px;
     max-width: 90%;
-    color: #b3ffcc;
+    color: #E0E0E0;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.87rem;
-    line-height: 1.65;
-    box-shadow: 0 0 18px #00ff4111, inset 0 0 30px #00ff4106;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(0, 255, 159, 0.03);
     white-space: pre-wrap;
     word-wrap: break-word;
 }
 .msg-bot::before {
-    content: '>> AI_SHIELD v1.0';
+    content: '>> QUANTX_CORE v2.0';
     display: block;
-    color: #00ff41;
-    font-size: 0.7rem;
+    color: #00FF9F;
+    font-size: 0.65rem;
+    font-weight: bold;
     letter-spacing: 2px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 8px #00ff41;
+    margin-bottom: 10px;
 }
 
 /* ── News card ── */
 .news-card {
-    background: #000a00;
-    border: 1px solid #00ff4133;
-    border-top: 2px solid #00ff41;
-    border-radius: 4px;
-    padding: 14px 18px;
-    margin: 8px 0;
-    color: #b3ffcc;
+    background: rgba(0, 207, 255, 0.03) !important;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(0, 207, 255, 0.1) !important;
+    border-top: 2px solid #00CFFF !important;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    color: #E0E0E0;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    box-shadow: 0 0 12px #00ff4111;
+    font-size: 0.88rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Alert / attack type card ── */
 .attack-card {
-    background: #0a0000;
-    border: 1px solid #ff4d0044;
-    border-left: 3px solid #ff4d00;
-    border-radius: 4px;
-    padding: 14px 18px;
-    color: #ffb380;
+    background: rgba(255, 0, 77, 0.05) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 0, 77, 0.2) !important;
+    border-left: 4px solid #FF004D !important;
+    border-radius: 8px;
+    padding: 16px 20px;
+    color: #FFC0D0;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.87rem;
-    line-height: 1.7;
-    box-shadow: 0 0 12px #ff4d0022;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(255, 0, 77, 0.05);
 }
 
 /* ── Status badges ── */
@@ -245,55 +270,33 @@ MATRIX_STYLE_BASE = """
 /* ── Input box ── */
 .stTextInput > div > div > input,
 .stChatInput textarea {
-    background-color: #000d05 !important;
-    color: #00ff41 !important;
-    border: 1px solid #00ff4155 !important;
-    border-radius: 4px !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    font-size: 0.9rem !important;
-    caret-color: #00ff41 !important;
-}
-.stTextInput > div > div > input:focus,
-.stChatInput textarea:focus {
-    border-color: #00ff41 !important;
-    box-shadow: 0 0 10px #00ff4133 !important;
+    background-color: rgba(10, 10, 20, 0.6) !important;
+    color: #00FF9F !important;
+    border: 1px solid rgba(0, 255, 159, 0.2) !important;
+    border-radius: 8px !important;
 }
 
-/* ── Chat input wrapper styling ── */
 [data-testid="stChatInput"] {
-    background-color: #000d05 !important;
-    border: 1px solid #00ff4144 !important;
-    border-radius: 6px !important;
-}
-[data-testid="stChatInput"] textarea {
-    background-color: transparent !important;
-    color: #00ff41 !important;
+    background-color: rgba(10, 10, 20, 0.6) !important;
+    border: 1px solid rgba(0, 255, 159, 0.2) !important;
+    border-radius: 12px !important;
 }
 [data-testid="stChatInput"] button {
-    background-color: #003311 !important;
-    color: #00ff41 !important;
-    border: 1px solid #00ff4155 !important;
-}
-[data-testid="stChatInput"] button:hover {
-    background-color: #00ff41 !important;
-    color: #000 !important;
+    background-color: #00FF9F !important;
+    color: #020202 !important;
 }
 
 /* ── Buttons ── */
 .stButton > button {
-    background-color: #000d05 !important;
-    color: #00ff41 !important;
-    border: 1px solid #00ff4166 !important;
-    border-radius: 4px !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    font-size: 0.8rem !important;
-    letter-spacing: 1px !important;
-    transition: all 0.2s !important;
+    background-color: transparent !important;
+    color: #00FF9F !important;
+    border: 1px solid #00FF9F !important;
+    border-radius: 6px !important;
 }
 .stButton > button:hover {
-    background-color: #00ff41 !important;
-    color: #000 !important;
-    box-shadow: 0 0 15px #00ff4155 !important;
+    background-color: #00FF9F !important;
+    color: #020202 !important;
+    box-shadow: 0 0 20px rgba(0, 255, 159, 0.6) !important;
 }
 .stButton > button:hover * {
     color: #000000 !important;
@@ -311,14 +314,14 @@ hr {
     margin: 1rem 0 !important;
 }
 
-/* ── Sidebar headers ── */
+/* ── Sidebar ── */
 .sidebar-title {
     font-family: 'Orbitron', monospace;
-    color: #00ff41;
+    color: #00FF9F;
     font-size: 0.9rem;
     letter-spacing: 3px;
     text-transform: uppercase;
-    text-shadow: 0 0 10px #00ff41;
+    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
     padding: 0.5rem 0;
 }
 
@@ -416,15 +419,28 @@ header { background-color: transparent !important; }
 }
 </style>
 
-<!-- Scanline overlay -->
-<div class="scanlines"></div>
+<!-- Grid Overlay -->
+<div class="grid-overlay"></div>
 
-<!-- Matrix Rain Canvas -->
-<canvas id="matrix-canvas"></canvas>
+<style>
+.grid-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    background-size: 40px 40px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 255, 159, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 159, 0.05) 1px, transparent 1px);
+    pointer-events: none;
+}
+</style>
+
+<canvas id="grid-canvas"></canvas>
 
 <script>
 (function() {
-    const canvas = document.getElementById('matrix-canvas');
+    const canvas = document.getElementById('grid-canvas');
     const ctx = canvas.getContext('2d');
     
     function resize() {
@@ -434,45 +450,51 @@ header { background-color: transparent !important; }
     resize();
     window.addEventListener('resize', resize);
     
-    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF<>{}[]|/\\';
-    const fontSize = 13;
-    let cols = Math.floor(canvas.width / fontSize);
-    let drops = Array(cols).fill(1);
-    
+    let offset = 0;
     function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#00ff41';
-        ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(0, 255, 159, 0.15)';
+        const vanishingPointY = canvas.height * 0.4;
+        const gridSpacing = 60;
         
-        cols = Math.floor(canvas.width / fontSize);
-        if (drops.length < cols) drops = drops.concat(Array(cols - drops.length).fill(1));
-        
-        for (let i = 0; i < cols; i++) {
-            const ch = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillStyle = i % 5 === 0 ? '#ffffff' : '#00ff41';
-            ctx.globalAlpha = Math.random() * 0.5 + 0.3;
-            ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
-            ctx.globalAlpha = 1;
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+        // Vertical lines
+        for (let i = -30; i <= 30; i++) {
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, vanishingPointY);
+            ctx.lineTo(canvas.width / 2 + (i * gridSpacing * 5), canvas.height);
+            ctx.stroke();
         }
+        // Horizontal lines
+        offset += 1.2;
+        if (offset > gridSpacing) offset = 0;
+        for (let i = 0; i < 20; i++) {
+            const screenY = vanishingPointY + (Math.pow(1.5, i) * (10 + offset));
+            if (screenY > canvas.height) break;
+            const alpha = Math.min(1.0, (screenY - vanishingPointY) / 300);
+            ctx.strokeStyle = `rgba(0, 255, 159, ${alpha * 0.2})`;
+            ctx.beginPath();
+            ctx.moveTo(0, screenY);
+            ctx.lineTo(canvas.width, screenY);
+            ctx.stroke();
+        }
+        requestAnimationFrame(draw);
     }
-    
-    setInterval(draw, 45);
+    draw();
 })();
 </script>
 """
 
-# ── Inject styles + canvas ───────────────────────────────────────
+# ─────────────────────────────────────────────────────────────
+#  THEME STYLE INJECTION
+# ─────────────────────────────────────────────────────────────
 def get_theme_style(theme_name):
     theme = THEMES[theme_name]
     style = MATRIX_STYLE_BASE
-    style = style.replace("#00ff41", theme["P"]).replace("#00cc33", theme["S"])
-    style = style.replace("#00140a", theme["UBG"]).replace("#000d05", theme["BBG"])
-    style = style.replace("#b3ffcc", theme["T"]).replace("#ff4d00", theme["A"])
-    style = style.replace("#ffb380", theme["AT"]).replace("#030f03", theme["CBG"])
-    style = style.replace("background-color: #000000 !important;", f"background-color: {theme['BG']} !important;")
+    # Replace the base color placeholders with theme-specific values
+    style = style.replace("#00FF9F", theme["P"]).replace("#00CFFF", theme["S"])
+    style = style.replace("rgba(0, 255, 159, 0.05)", theme["UBG"]).replace("rgba(0, 207, 255, 0.05)", theme["BBG"])
+    style = style.replace("#E0E0E0", theme["T"]).replace("#FF004D", theme["A"])
+    style = style.replace("#020202", theme["BG"])
     return style
 
 st.markdown(get_theme_style(st.session_state.theme), unsafe_allow_html=True)
@@ -595,11 +617,13 @@ def detect_message_type(query: str, response: str) -> str:
     return "rag"
 
 
-def stream_text(text: str, placeholder, delay: float = 0.008):
-    """Simulate streaming/typewriter effect for bot responses."""
+def stream_text(text: str, placeholder, delay: float = 0.005):
+    """Simulate smooth streaming/typewriter effect for bot responses."""
     displayed = ""
-    for char in text:
-        displayed += char
+    # Stream in small groups to reduce flicker and improve performance
+    chunk_size = 2
+    for i in range(0, len(text), chunk_size):
+        displayed += text[i:i+chunk_size]
         placeholder.markdown(
             f'<div class="msg-bot">{displayed}▌</div>',
             unsafe_allow_html=True
