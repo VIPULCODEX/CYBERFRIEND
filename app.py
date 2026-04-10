@@ -728,14 +728,8 @@ with st.sidebar:
         st.session_state.news_count = 0
         st.rerun()
 
+    # Footer removed as requested
     st.markdown("---")
-    st.markdown(
-        '<div style="font-size:0.65rem; color:#00ff4155; text-align:center; letter-spacing:2px;">'
-        'QUANTX v1.0<br>RAG + GEMINI + NEWSAPI<br>'
-        '// STAY SECURE //'
-        '</div>',
-        unsafe_allow_html=True
-    )
 
 
 # ════════════════════════════════════════════════════════════════
