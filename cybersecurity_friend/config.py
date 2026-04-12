@@ -6,7 +6,9 @@ All API keys are read from .env file using python-dotenv
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load .env file
+# Resolve all project paths relative to this file so startup works from any CWD.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))  # Load local .env file
 
 # ─────────────────────────────────────────
 # API Keys (loaded from .env)
@@ -36,8 +38,8 @@ TOP_K         = 3   # Number of chunks to retrieve
 # ─────────────────────────────────────────
 # File Paths
 # ─────────────────────────────────────────
-DATA_DIR         = "data"          # Put your PDF/TXT files here
-FAISS_INDEX_PATH = "faiss_index"  # Auto-created when index is built
+DATA_DIR         = os.path.join(BASE_DIR, "data")         # Put your PDF/TXT files here
+FAISS_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index")  # Auto-created when index is built
 
 # ─────────────────────────────────────────
 # Cache Settings
