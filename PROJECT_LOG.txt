@@ -1,0 +1,73 @@
+🛡 QUANTX AI — PROJECT MILESTONE LOG
+=====================================
+Status: Production-Ready (Draft V1)
+Last Updated: 2026-04-12
+
+This document tracks the evolution of the QuantX Cybersecurity Assistant from a basic prototype to a multi-platform production-grade service.
+
+--------------------------------------------------------------------------------
+1. BACKEND ARCHITECTURE & SECURITY (FastAPI)
+--------------------------------------------------------------------------------
+- [COMPLETED] Migrated from a simple script to a robust FastAPI backend.
+- [COMPLETED] Implemented Secure API Key Management using python-dotenv (.env).
+- [COMPLETED] Added Request Validation & Normalization (sanitizing user inputs).
+- [COMPLETED] Implemented a "Privacy-First" Logging system (no user query storage).
+- [COMPLETED] Built a custom Rate Limiter (5 req/min per user) to prevent API abuse.
+- [COMPLETED] Developed an In-Memory Response Cache with TTL (Time-To-Live) to reduce costs and latency for common queries.
+- [COMPLETED] Optimized Concurrency by moving blocking LLM/RAG calls to a thread pool.
+
+--------------------------------------------------------------------------------
+2. RAG PIPELINE & AI INTELLIGENCE
+--------------------------------------------------------------------------------
+- [COMPLETED] Integrated LangChain for the core RAG (Retrieval-Augmented Generation) chain.
+- [COMPLETED] Implemented FAISS (Facebook AI Similarity Search) for high-performance local knowledge retrieval.
+- [COMPLETED] Configured CPU-friendly embeddings (sentence-transformers/all-MiniLM-L6-v2) for low-cost hosting.
+- [COMPLETED] Added support for live Cybersecurity News fetching via NewsAPI.org.
+- [COMPLETED] Centralized LLM control (Groq Llama-3.3-70B) with configurable temperature and token limits.
+
+--------------------------------------------------------------------------------
+3. PREMIUM WEB INTERFACE (Streamlit "QuantX")
+--------------------------------------------------------------------------------
+- [COMPLETED] Total UI Overhaul: Transitioned from raw "hacker-style" to a premium "Cyber-Intelligence Dashboard".
+- [COMPLETED] Implemented a strict Color System: Neon Green (#00FF9F), Amber (#FFC857), and Deep Black (#020202).
+- [COMPLETED] Added Glassmorphism Effects: Transparent cards with background blur and glowing borders.
+- [COMPLETED] Developed a Dynamic Threat Level Bar: Visualizes risk levels from Low to Critical with color gradients and pulsing effects.
+- [COMPLETED] Built Custom Micro-Animations: Fade-in messages, scanning loaders, pulsing status dots, and header glow.
+- [COMPLETED] Integrated System Verification Panel: Allows users to run static vulnerability analysis on their system profiles.
+
+--------------------------------------------------------------------------------
+4. MOBILE APPLICATION (Flutter)
+--------------------------------------------------------------------------------
+- [COMPLETED] Project Initialization: Set up a "Cyber Intel" Flutter app structure.
+- [COMPLETED] Brand Consistency: Ported the Cyberpunk aesthetic to mobile with custom themes (Inter & Orbitron fonts).
+- [COMPLETED] Network Layer: Built a robust ApiService to handle cloud-based backend interactions.
+- [COMPLETED] Tactical Chat UI: Created a mobile-optimized chat interface with real-time state updates and threat visualization.
+
+--------------------------------------------------------------------------------
+5. DEPLOYMENT & DEVOPS
+--------------------------------------------------------------------------------
+- [COMPLETED] Monorepo Reorganization: Merged Backend, Frontend, and Mobile code into a single, clean project structure.
+- [COMPLETED] Dockerization: Created a multi-purpose Dockerfile for instant deployment across any server.
+- [COMPLETED] Infrastructure as Code: Prepared 'render.yaml' for automated one-click deployments to the cloud.
+- [COMPLETED] Project Documentation: Created technical README.md and current Milestone Log.
+
+--------------------------------------------------------------------------------
+6. BUG FIXES & REFINEMENTS
+--------------------------------------------------------------------------------
+- [FIXED] Fixed broken header icons ("keyboard_double_") by overriding Streamlit's default header CSS.
+- [FIXED] Fixed UTF-8 encoding issues in Windows terminals.
+- [FIXED] Fixed event-loop blocking issues by converting async endpoints to thread-pool enabled sync endpoints.
+- [FIXED] Standardized config variable usage (LLM_MAX_TOKENS) across all modules.
+
+--------------------------------------------------------------------------------
+7. REFINED THEME OVERHAUL (v2.2)
+--------------------------------------------------------------------------------
+- [COMPLETED] Migrated base palette to #0B0F14 (Deep Charcoal) for premium contrast.
+- [COMPLETED] Switched Primary Accent to "Yellow / Gold" (#FFC857) for trust and high attention.
+- [COMPLETED] Switched Secondary Color to "Soft Green" (#4CAF50) for status and safety indications.
+- [COMPLETED] Integrated 3D Perspective Grid with animated translation for deep spatial background effect.
+- [COMPLETED] Updated Flutter Mobile App theme to provide consistent cross-platform aesthetics.
+
+
+=====================================
+EOF — END OF FILE

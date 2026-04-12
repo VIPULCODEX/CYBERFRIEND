@@ -45,27 +45,27 @@ PREMIUM_CSS = """
    DESIGN TOKENS
    ══════════════════════════════════════════════════════════════ */
 :root {
-    --primary: #00FF9F;
-    --primary-dim: rgba(0, 255, 159, 0.15);
-    --primary-glow: rgba(0, 255, 159, 0.4);
-    --primary-subtle: rgba(0, 255, 159, 0.06);
-    --accent: #FFC857;
-    --accent-dim: rgba(255, 200, 87, 0.15);
-    --accent-glow: rgba(255, 200, 87, 0.4);
+    --primary: #FFC857;
+    --primary-dim: rgba(255, 200, 87, 0.15);
+    --primary-glow: rgba(255, 200, 87, 0.4);
+    --primary-subtle: rgba(255, 200, 87, 0.06);
+    --accent: #4CAF50;
+    --accent-dim: rgba(76, 175, 80, 0.15);
+    --accent-glow: rgba(76, 175, 80, 0.4);
     --alert: #FF3D5A;
     --alert-dim: rgba(255, 61, 90, 0.1);
     --info-blue: #00CFFF;
     --info-blue-dim: rgba(0, 207, 255, 0.08);
-    --bg-deep: #020202;
-    --bg-card: rgba(8, 12, 10, 0.65);
-    --bg-card-hover: rgba(12, 20, 16, 0.8);
-    --bg-sidebar: #030d08;
-    --text-primary: #E8ECE9;
-    --text-secondary: #8A9B8F;
-    --text-muted: #4A5B4F;
-    --border-subtle: rgba(0, 255, 159, 0.08);
-    --border-default: rgba(0, 255, 159, 0.15);
-    --border-hover: rgba(0, 255, 159, 0.35);
+    --bg-deep: #0B0F14;
+    --bg-card: rgba(11, 15, 20, 0.75);
+    --bg-card-hover: rgba(15, 20, 26, 0.85);
+    --bg-sidebar: #070a0e;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0AEC0;
+    --text-muted: #4A5568;
+    --border-subtle: rgba(255, 200, 87, 0.08);
+    --border-default: rgba(255, 200, 87, 0.15);
+    --border-hover: rgba(255, 200, 87, 0.35);
     --glass-blur: blur(16px);
     --radius-sm: 6px;
     --radius-md: 10px;
@@ -101,10 +101,26 @@ PREMIUM_CSS = """
     width: 100%; height: 100%;
     z-index: 0;
     pointer-events: none;
-    background-size: 50px 50px;
+    perspective: 1200px;
+    overflow: hidden;
+}
+
+.grid-bg::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background-size: 60px 60px;
     background-image:
-        linear-gradient(to right, rgba(0, 255, 159, 0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 255, 159, 0.025) 1px, transparent 1px);
+        linear-gradient(to right, rgba(255, 200, 87, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 200, 87, 0.03) 1px, transparent 1px);
+    transform: rotateX(60deg);
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    from { transform: rotateX(60deg) translateY(0); }
+    to { transform: rotateX(60deg) translateY(60px); }
 }
 
 /* Vignette overlay for depth */

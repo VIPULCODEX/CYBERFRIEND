@@ -32,10 +32,10 @@ class _ChatScreenState extends State<ChatScreen> {
     final api = context.watch<ApiService>();
     
     return Scaffold(
-      backgroundColor: const Color(0xFF020202),
+      backgroundColor: const Color(0xFF0B0F14),
       appBar: AppBar(
         title: Text('🛡 QUANTX AI', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 16)),
-        backgroundColor: const Color(0xFF030d08),
+        backgroundColor: const Color(0xFF070A0E),
         elevation: 0,
         actions: [
           IconButton(
@@ -78,13 +78,13 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildThreatPanel(double level) {
-    Color color = level < 30 ? const Color(0xFF00FF9F) : level < 60 ? const Color(0xFFFFC857) : const Color(0xFFFF3D5A);
+    Color color = level < 30 ? const Color(0xFF4CAF50) : level < 60 ? const Color(0xFFFFC857) : const Color(0xFFFF3D5A);
     String label = level < 30 ? "LOW" : level < 60 ? "ELEVATED" : "CRITICAL";
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF080C0A),
+        color: const Color(0xFF070A0E),
         border: Border(bottom: BorderSide(color: color.withOpacity(0.1), width: 1)),
       ),
       child: Column(
@@ -142,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageBubble(ApiMessage msg) {
     bool isUser = msg.role == 'user';
-    Color themeColor = msg.type == 'alert' ? const Color(0xFFFF3D5A) : msg.type == 'news' ? const Color(0xFF00CFFF) : const Color(0xFF00FF9F);
+    Color themeColor = msg.type == 'alert' ? const Color(0xFFFF3D5A) : msg.type == 'news' ? const Color(0xFF00CFFF) : const Color(0xFFFFC857);
     
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -151,7 +151,7 @@ class _ChatScreenState extends State<ChatScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.85),
         decoration: BoxDecoration(
-          color: isUser ? const Color(0xFF00CFFF).withOpacity(0.08) : const Color(0xFF00FF9F).withOpacity(0.05),
+          color: isUser ? const Color(0xFF00CFFF).withOpacity(0.08) : const Color(0xFFFFC857).withOpacity(0.05),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(isUser ? 16 : 4),
             topRight: Radius.circular(isUser ? 4 : 16),
@@ -188,15 +188,15 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _controller,
-              style: const TextStyle(color: Color(0xFF00FF9F), fontSize: 14),
+              style: const TextStyle(color: Color(0xFFFFC857), fontSize: 14),
               decoration: InputDecoration(
                 hintText: "// ENTER QUERY...",
                 hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
                 filled: true,
-                fillColor: const Color(0xFF080C0A),
+                fillColor: const Color(0xFF070A0E),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.white.withOpacity(0.05))),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF00FF9F), width: 1)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFFFC857), width: 1)),
               ),
               onSubmitted: (val) => _handleSend(api),
             ),
@@ -207,9 +207,9 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF00FF9F),
+                color: const Color(0xFFFFC857),
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: const Color(0xFF00FF9F).withOpacity(0.3), blurRadius: 10, spreadRadius: 1)],
+                boxShadow: [BoxShadow(color: const Color(0xFFFFC857).withOpacity(0.3), blurRadius: 10, spreadRadius: 1)],
               ),
               child: const Icon(Icons.send_rounded, color: Colors.black, size: 20),
             ),

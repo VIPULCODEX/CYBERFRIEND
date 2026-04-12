@@ -24,9 +24,9 @@ class QuantXApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF020202),
-        primaryColor: const Color(0xFF00FF9F),
-        hintColor: const Color(0xFFFFC857),
+        scaffoldBackgroundColor: const Color(0xFF0B0F14),
+        primaryColor: const Color(0xFFFFC857),
+        hintColor: const Color(0xFF4CAF50),
         
         // Define Cyberpunk Typography
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
@@ -36,7 +36,7 @@ class QuantXApp extends StatelessWidget {
             letterSpacing: 4,
           ),
           titleMedium: GoogleFonts.rajdhani(
-            color: const Color(0xFF00FF9F),
+            color: const Color(0xFF4CAF50),
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
           ),
