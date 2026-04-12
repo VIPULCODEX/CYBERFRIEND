@@ -24,3 +24,12 @@ faiss_index/
 # ─── OS Files ────────────────────────────
 .DS_Store
 Thumbs.db
+
+# ─── Mobile / Flutter ────────────────────
+cyber_intel_app/.dart_tool/
+cyber_intel_app/build/
+cyber_intel_app/.flutter-plugins
+cyber_intel_app/.flutter-plugins-dependencies
+cyber_intel_app/.packages
+cyber_intel_app/pubspec.lock
+
