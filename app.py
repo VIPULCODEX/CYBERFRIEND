@@ -1,7 +1,7 @@
 """
 app.py – Streamlit UI for QuantX AI Assistant
 Run: streamlit run app.py
-Dark Web / Matrix Theme with real-time feel
+Premium Cyberpunk Dashboard — Production-Ready Interface
 """
 
 import os
@@ -32,559 +32,961 @@ st.set_page_config(
 )
 
 # ════════════════════════════════════════════════════════════════
-#  THEMES CONFIGURATION
+#  PREMIUM CYBERPUNK CSS
 # ════════════════════════════════════════════════════════════════
-THEMES = {
-    "QuantX Premium": { 
-        "P": "#00FF9F",   # Primary Neon Green
-        "S": "#00CFFF",   # Secondary Electric Blue
-        "A": "#FF004D",   # Accent Pink/Red
-        "AM": "#FFC857",  # Amber/Warning
-        "DG": "#0B3D2E",  # Dark Green Tactical
-        "BG": "#020202",  # Background
-        "UBG": "rgba(0, 255, 159, 0.05)", 
-        "BBG": "rgba(0, 207, 255, 0.05)",
-        "T": "#E0E0E0" 
-    }
-}
-
-if "theme" not in st.session_state:
-    st.session_state.theme = "QuantX Premium"
-
-# ════════════════════════════════════════════════════════════════
-#  MATRIX / DARK-WEB CSS + CANVAS RAIN ANIMATION
-# ════════════════════════════════════════════════════════════════
-MATRIX_STYLE_BASE = """
+PREMIUM_CSS = """
 <style>
-/* ── Google Font ── */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+/* ══════════════════════════════════════════════════════════════
+   TYPOGRAPHY — Google Fonts
+   ══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
-/* ── Global Reset ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; }
-
-/* ── App background ── */
-.stApp {
-    background-color: #020202 !important;
-    color: #E0E0E0 !important;
-    font-family: 'Share Tech Mono', 'Noto Color Emoji', monospace !important;
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   ══════════════════════════════════════════════════════════════ */
+:root {
+    --primary: #00FF9F;
+    --primary-dim: rgba(0, 255, 159, 0.15);
+    --primary-glow: rgba(0, 255, 159, 0.4);
+    --primary-subtle: rgba(0, 255, 159, 0.06);
+    --accent: #FFC857;
+    --accent-dim: rgba(255, 200, 87, 0.15);
+    --accent-glow: rgba(255, 200, 87, 0.4);
+    --alert: #FF3D5A;
+    --alert-dim: rgba(255, 61, 90, 0.1);
+    --info-blue: #00CFFF;
+    --info-blue-dim: rgba(0, 207, 255, 0.08);
+    --bg-deep: #020202;
+    --bg-card: rgba(8, 12, 10, 0.65);
+    --bg-card-hover: rgba(12, 20, 16, 0.8);
+    --bg-sidebar: #030d08;
+    --text-primary: #E8ECE9;
+    --text-secondary: #8A9B8F;
+    --text-muted: #4A5B4F;
+    --border-subtle: rgba(0, 255, 159, 0.08);
+    --border-default: rgba(0, 255, 159, 0.15);
+    --border-hover: rgba(0, 255, 159, 0.35);
+    --glass-blur: blur(16px);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 36px;
+    --space-2xl: 48px;
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Matrix canvas overlay ── */
-#matrix-canvas {
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL RESET
+   ══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+
+.stApp {
+    background-color: var(--bg-deep) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SUBTLE GRID BACKGROUND
+   ══════════════════════════════════════════════════════════════ */
+.grid-bg {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 0;
-    opacity: 0.07;
     pointer-events: none;
+    background-size: 50px 50px;
+    background-image:
+        linear-gradient(to right, rgba(0, 255, 159, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 159, 0.025) 1px, transparent 1px);
 }
 
-/* ── All content above canvas ── */
+/* Vignette overlay for depth */
+.vignette {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN CONTENT AREA
+   ══════════════════════════════════════════════════════════════ */
 .main .block-container {
     position: relative;
     z-index: 1;
-    padding-top: 1rem !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
     max-width: 1100px !important;
     margin: 0 auto !important;
 }
 
-/* ── Sidebar ── */
+/* ══════════════════════════════════════════════════════════════
+   HEADER — QUANTX AI TITLE
+   ══════════════════════════════════════════════════════════════ */
+.cyber-header {
+    text-align: center;
+    padding: 2rem 0 1rem 0;
+    position: relative;
+}
+
+.cyber-header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-shadow:
+        0 0 20px rgba(255, 200, 87, 0.5),
+        0 0 40px rgba(255, 200, 87, 0.2),
+        0 0 80px rgba(255, 200, 87, 0.1);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin: 0;
+    animation: headerGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes headerGlow {
+    0% {
+        text-shadow:
+            0 0 15px rgba(255, 200, 87, 0.4),
+            0 0 30px rgba(255, 200, 87, 0.15);
+        filter: brightness(1);
+    }
+    100% {
+        text-shadow:
+            0 0 25px rgba(255, 200, 87, 0.7),
+            0 0 50px rgba(255, 200, 87, 0.3),
+            0 0 80px rgba(255, 200, 87, 0.15);
+        filter: brightness(1.05);
+    }
+}
+
+.cyber-header .subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+}
+
+.header-rule {
+    width: 60%;
+    max-width: 500px;
+    margin: 0.8rem auto 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-dim), var(--primary-glow), var(--primary-dim), transparent);
+    border: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SECURE CHANNEL BAR
+   ══════════════════════════════════════════════════════════════ */
+.secure-bar {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    padding: 0.6rem 0 1.8rem 0;
+    position: relative;
+}
+.secure-bar::before {
+    content: '●';
+    color: var(--primary);
+    margin-right: 8px;
+    font-size: 0.5rem;
+    vertical-align: middle;
+    animation: statusBlink 2s ease-in-out infinite;
+}
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GLASSMORPHISM CARD BASE
+   ══════════════════════════════════════════════════════════════ */
+.glass-card {
+    background: var(--bg-card) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    -webkit-backdrop-filter: var(--glass-blur) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--space-lg) !important;
+    transition: all var(--transition-smooth) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-dim), transparent);
+    opacity: 0;
+    transition: opacity var(--transition-smooth);
+}
+
+.glass-card:hover {
+    border-color: var(--border-hover) !important;
+    box-shadow: 0 0 30px rgba(0, 255, 159, 0.06), 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.glass-card:hover::before {
+    opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHAT CONTAINER
+   ══════════════════════════════════════════════════════════════ */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    margin-bottom: 1.5rem;
+}
+
+/* ── User Message Bubble ── */
+.msg-user {
+    align-self: flex-end;
+    background: var(--info-blue-dim) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 207, 255, 0.15) !important;
+    border-radius: var(--radius-lg) var(--radius-lg) 2px var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    max-width: 80%;
+    color: var(--info-blue);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.6;
+    box-shadow: 0 4px 20px rgba(0, 207, 255, 0.04);
+    animation: msgSlideIn 0.4s ease-out;
+}
+
+.msg-user::before {
+    content: 'OPERATOR';
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    color: rgba(0, 207, 255, 0.5);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+/* ── Bot Message Bubble ── */
+.msg-bot {
+    align-self: flex-start;
+    background: var(--primary-subtle) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 159, 0.1) !important;
+    border-left: 3px solid var(--primary) !important;
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 2px;
+    padding: var(--space-lg) var(--space-xl);
+    max-width: 90%;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.75;
+    box-shadow: 0 4px 25px rgba(0, 255, 159, 0.03);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    animation: msgFadeIn 0.5s ease-out;
+}
+
+.msg-bot::before {
+    content: 'QUANTX CORE v2.1';
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--primary);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+@keyframes msgSlideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── News Card ── */
+.news-card {
+    background: var(--info-blue-dim) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 207, 255, 0.1) !important;
+    border-top: 2px solid var(--info-blue) !important;
+    border-radius: var(--radius-md);
+    padding: var(--space-lg) var(--space-xl);
+    margin: var(--space-md) 0;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    animation: msgFadeIn 0.5s ease-out;
+}
+
+/* ── Alert / Attack Card ── */
+.attack-card {
+    background: var(--alert-dim) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 61, 90, 0.15) !important;
+    border-left: 3px solid var(--alert) !important;
+    border-radius: var(--radius-md);
+    padding: var(--space-lg) var(--space-xl);
+    color: #FFC0CB;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    box-shadow: 0 4px 20px rgba(255, 61, 90, 0.05);
+    animation: msgFadeIn 0.5s ease-out;
+}
+
+/* ── Status Badges ── */
+.badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.badge-rag {
+    background: rgba(0, 255, 159, 0.08);
+    color: var(--primary);
+    border: 1px solid rgba(0, 255, 159, 0.25);
+}
+.badge-news {
+    background: rgba(0, 207, 255, 0.08);
+    color: var(--info-blue);
+    border: 1px solid rgba(0, 207, 255, 0.25);
+}
+.badge-alert {
+    background: rgba(255, 61, 90, 0.08);
+    color: var(--alert);
+    border: 1px solid rgba(255, 61, 90, 0.25);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR — TACTICAL PANEL
+   ══════════════════════════════════════════════════════════════ */
 [data-testid="stSidebar"] {
-    background-color: #030f03 !important;
-    border-right: 1px solid #00ff4133 !important;
+    background: linear-gradient(180deg, #020a05 0%, #030d08 50%, #020a05 100%) !important;
+    border-right: 1px solid var(--border-subtle) !important;
     overflow-x: hidden !important;
 }
 [data-testid="stSidebar"] > div {
     overflow-x: hidden !important;
-}
-[data-testid="stSidebar"] * {
-    color: #00ff41 !important;
-    font-family: 'Share Tech Mono', monospace !important;
+    padding-top: 1rem !important;
 }
 
-/* ── Header title ── */
-.cyber-header {
-    text-align: center;
-    padding: 1.2rem 0 0.5rem 0;
+.sidebar-title {
     font-family: 'Orbitron', monospace;
-}
-.cyber-header h1 {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: #FFC857;
-    text-shadow: 0 0 15px rgba(255, 200, 87, 0.7), 0 0 30px rgba(255, 200, 87, 0.3);
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    animation: neonPulse 3s infinite alternate;
-}
-@keyframes neonPulse {
-    from { text-shadow: 0 0 10px rgba(255, 200, 87, 0.5); }
-    to { text-shadow: 0 0 25px rgba(255, 200, 87, 0.8), 0 0 45px rgba(255, 200, 87, 0.4); }
-}
-.cyber-header p {
-    color: #00cc33;
-    font-size: 0.75rem;
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 600;
     letter-spacing: 3px;
-    margin-top: 0.3rem;
-    font-family: 'Share Tech Mono', monospace;
+    text-transform: uppercase;
+    padding: 0.5rem 0 0.3rem 0;
+    position: relative;
 }
 
-/* ── Flicker animation ── */
-@keyframes flicker {
-    0%, 95%, 100% { opacity: 1; }
-    96% { opacity: 0.85; }
-    97% { opacity: 1; }
-    98% { opacity: 0.7; }
-    99% { opacity: 1; }
+.sidebar-section-label {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
 }
 
-/* ── Scanline overlay ── */
-.scanlines {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 255, 65, 0.012) 2px,
-        rgba(0, 255, 65, 0.012) 4px
-    );
-    pointer-events: none;
-    z-index: 0;
+/* ── Threat Level Component ── */
+.threat-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-md);
+    margin-bottom: var(--space-lg);
+    transition: all var(--transition-smooth);
+}
+.threat-panel:hover {
+    border-color: var(--border-default);
+    box-shadow: 0 0 20px rgba(0, 255, 159, 0.04);
 }
 
-/* ── Threat Indicator ── */
-.threat-container {
-    padding: 10px;
-    background: rgba(11, 61, 46, 0.3);
-    border: 1px solid rgba(0, 255, 159, 0.2);
-    border-radius: 8px;
-    margin-bottom: 20px;
+.threat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
-.threat-bar {
-    height: 10px;
+.threat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+.threat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    border-radius: 3px;
+}
+
+.threat-bar-track {
+    height: 6px;
     width: 100%;
-    background: #1a1a1a;
-    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
     overflow: hidden;
-    margin-top: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.threat-fill {
-    height: 100%;
-    transition: width 0.5s ease-in-out, background 0.5s;
+    position: relative;
 }
 
-/* ── Radar ── */
+.threat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.8s ease;
+    position: relative;
+}
+.threat-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    border-radius: 3px;
+    animation: barPulse 1.5s ease-in-out infinite;
+}
+@keyframes barPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* ── Radar Component ── */
 .radar-box {
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 10px 0 25px 0;
+    padding: var(--space-md) 0 var(--space-lg) 0;
 }
 .radar {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    border: 2px solid rgba(0, 255, 159, 0.4);
+    border: 1px solid rgba(0, 255, 159, 0.2);
     position: relative;
     overflow: hidden;
-    background: radial-gradient(circle, rgba(11, 61, 46, 0.5) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 255, 159, 0.05) 0%, transparent 70%);
 }
 .radar::before {
     content: '';
     position: absolute;
-    top: 50%; left: 10%; right: 10%;
-    height: 1px; background: rgba(0, 255, 159, 0.2);
+    top: 50%; left: 5%; right: 5%;
+    height: 1px;
+    background: rgba(0, 255, 159, 0.1);
 }
 .radar::after {
     content: '';
     position: absolute;
     top: 50%; left: 50%;
     width: 200%; height: 200%;
-    background: conic-gradient(from 0deg, rgba(0, 255, 159, 0.3) 0%, transparent 25%);
+    background: conic-gradient(from 0deg, rgba(0, 255, 159, 0.25) 0%, transparent 20%);
     transform: translate(-50%, -50%);
-    animation: rotate 4s linear infinite;
-    pointer-events: none;
+    animation: radarSweep 3.5s linear infinite;
 }
-@keyframes rotate {
+@keyframes radarSweep {
     from { transform: translate(-50%, -50%) rotate(0deg); }
     to { transform: translate(-50%, -50%) rotate(360deg); }
 }
+/* Radar crosshair */
+.radar-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 6px; height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px var(--primary), 0 0 12px var(--primary-glow);
+    z-index: 2;
+}
+.radar-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 255, 159, 0.08);
+}
+.radar-ring-1 { width: 33%; height: 33%; transform: translate(-50%, -50%); }
+.radar-ring-2 { width: 66%; height: 66%; transform: translate(-50%, -50%); }
 
-/* ── System Logs ── */
-.log-container {
-    background: rgba(0, 0, 0, 0.8) !important;
-    border: 1px solid rgba(0, 255, 159, 0.2) !important;
-    border-radius: 4px;
-    padding: 10px;
-    height: 180px;
-    font-size: 0.7rem !important;
-    font-family: 'Share Tech Mono', monospace !important;
-    color: #00FF9F !important;
-    overflow-y: hidden;
+/* ── System Status Dot ── */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: var(--space-sm) 0;
+}
+.status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 8px var(--primary), 0 0 16px var(--primary-glow);
+    animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--primary); }
+    50% { opacity: 0.4; box-shadow: 0 0 3px var(--primary); }
+}
+.status-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--primary);
+    text-transform: uppercase;
+}
+
+/* ── System Logs Panel ── */
+.log-panel {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
+    height: 200px;
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace;
+    overflow-y: auto;
     display: flex;
     flex-direction: column-reverse;
-    gap: 4px;
-    box-shadow: inset 0 0 10px rgba(0, 255, 159, 0.1);
+    gap: 3px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 159, 0.2) transparent;
 }
 .log-line {
-    border-left: 2px solid rgba(0, 255, 159, 0.3);
-    padding-left: 8px;
-    animation: logFadeIn 0.3s ease-out;
+    padding: 3px 0 3px 10px;
+    border-left: 2px solid transparent;
+    animation: logSlideIn 0.3s ease-out;
+    line-height: 1.5;
 }
-@keyframes logFadeIn {
-    from { opacity: 0; transform: translateX(-5px); }
+.log-line.log-info {
+    color: var(--primary);
+    border-left-color: rgba(0, 255, 159, 0.3);
+}
+.log-line.log-warn {
+    color: var(--accent);
+    border-left-color: rgba(255, 200, 87, 0.4);
+}
+.log-line.log-error {
+    color: var(--alert);
+    border-left-color: rgba(255, 61, 90, 0.4);
+}
+.log-line.log-system {
+    color: var(--text-muted);
+    border-left-color: rgba(255, 255, 255, 0.1);
+}
+.log-timestamp {
+    color: var(--text-muted);
+    margin-right: 6px;
+}
+
+@keyframes logSlideIn {
+    from { opacity: 0; transform: translateX(-8px); }
     to { opacity: 1; transform: translateX(0); }
 }
 
-/* ── Glassmorphism Utility ── */
-.glass-card {
-    background: rgba(10, 10, 20, 0.4) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(0, 255, 159, 0.1) !important;
-    border-radius: 12px !important;
+/* ── Metric Cards ── */
+[data-testid="stMetric"] {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: var(--space-md) !important;
+    transition: all var(--transition-smooth) !important;
+}
+[data-testid="stMetric"]:hover {
+    border-color: var(--border-default) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 159, 0.05) !important;
+}
+[data-testid="stMetricLabel"] {
+    font-family: 'Rajdhani', sans-serif !important;
+    color: var(--text-secondary) !important;
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+[data-testid="stMetricValue"] {
+    font-family: 'Orbitron', monospace !important;
+    color: var(--primary) !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
 }
 
-/* ── Chat container ── */
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 1rem;
-}
-
-/* ── User message bubble ── */
-.msg-user {
-    align-self: flex-end;
-    background: rgba(0, 207, 255, 0.08) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 207, 255, 0.2) !important;
-    border-radius: 12px 12px 0 12px;
-    padding: 12px 18px;
-    max-width: 85%;
-    color: #00CFFF;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(0, 207, 255, 0.05);
-    position: relative;
-    transition: all 0.3s ease;
-}
-.msg-user::before {
-    content: '> OPERATOR';
-    display: block;
-    color: rgba(0, 207, 255, 0.6);
-    font-size: 0.65rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-}
-
-/* ── Assistant message bubble ── */
-.msg-bot {
-    align-self: flex-start;
-    background: rgba(0, 255, 159, 0.05) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 255, 159, 0.15) !important;
-    border-left: 3px solid #00FF9F !important;
-    border-radius: 12px 12px 12px 0;
-    padding: 16px 22px;
-    max-width: 90%;
-    color: #E0E0E0;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    box-shadow: 0 4px 20px rgba(0, 255, 159, 0.03);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-.msg-bot::before {
-    content: '>> QUANTX_CORE v2.0';
-    display: block;
-    color: #00FF9F;
-    font-size: 0.65rem;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-}
-
-/* ── News card ── */
-.news-card {
-    background: rgba(0, 207, 255, 0.03) !important;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(0, 207, 255, 0.1) !important;
-    border-top: 2px solid #00CFFF !important;
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin: 12px 0;
-    color: #E0E0E0;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.88rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* ── Alert / attack type card ── */
-.attack-card {
-    background: rgba(255, 0, 77, 0.05) !important;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 0, 77, 0.2) !important;
-    border-left: 4px solid #FF004D !important;
-    border-radius: 8px;
-    padding: 16px 20px;
-    color: #FFC0D0;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(255, 0, 77, 0.05);
-}
-
-/* ── Status badges ── */
-.badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 3px;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    font-family: 'Share Tech Mono', monospace;
-    text-transform: uppercase;
-}
-.badge-rag   { background: #001a08; color: #00ff41; border: 1px solid #00ff41; }
-.badge-news  { background: #00001a; color: #4d9fff; border: 1px solid #4d9fff; }
-.badge-alert { background: #1a0000; color: #ff4d00; border: 1px solid #ff4d00; }
-
-/* ── Input box ── */
+/* ══════════════════════════════════════════════════════════════
+   INPUT FIELDS — Focus Glow
+   ══════════════════════════════════════════════════════════════ */
 .stTextInput > div > div > input,
-.stChatInput textarea {
-    background-color: rgba(10, 10, 20, 0.6) !important;
-    color: #00FF9F !important;
-    border: 1px solid rgba(0, 255, 159, 0.2) !important;
-    border-radius: 8px !important;
+.stTextArea textarea {
+    background-color: rgba(8, 12, 10, 0.7) !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 12px 16px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.88rem !important;
+    transition: all var(--transition-fast) !important;
+}
+.stTextInput > div > div > input:focus,
+.stTextArea textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 255, 159, 0.1), 0 0 20px rgba(0, 255, 159, 0.08) !important;
+    outline: none !important;
 }
 
 [data-testid="stChatInput"] {
-    background-color: rgba(10, 10, 20, 0.6) !important;
-    border: 1px solid rgba(0, 255, 159, 0.2) !important;
-    border-radius: 12px !important;
+    background-color: rgba(8, 12, 10, 0.7) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    transition: all var(--transition-fast) !important;
+}
+[data-testid="stChatInput"]:focus-within {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(0, 255, 159, 0.08), 0 0 25px rgba(0, 255, 159, 0.06) !important;
+}
+[data-testid="stChatInput"] textarea {
+    color: var(--primary) !important;
+    font-family: 'Inter', sans-serif !important;
 }
 [data-testid="stChatInput"] button {
-    background-color: #00FF9F !important;
-    color: #020202 !important;
+    background-color: var(--primary) !important;
+    color: var(--bg-deep) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all var(--transition-fast) !important;
+}
+[data-testid="stChatInput"] button:hover {
+    box-shadow: 0 0 15px var(--primary-glow) !important;
+    transform: scale(1.05);
 }
 
-/* ── Buttons ── */
+/* ══════════════════════════════════════════════════════════════
+   BUTTONS — Hover Glow + Scale
+   ══════════════════════════════════════════════════════════════ */
 .stButton > button {
-    background-color: transparent !important;
-    color: #00FF9F !important;
-    border: 1px solid #00FF9F !important;
-    border-radius: 6px !important;
+    background: transparent !important;
+    color: var(--primary) !important;
+    border: 1px solid var(--border-default) !important;
+    border-radius: var(--radius-sm) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 1px !important;
+    padding: 8px 16px !important;
+    transition: all var(--transition-fast) !important;
 }
 .stButton > button:hover {
-    background-color: #00FF9F !important;
-    color: #020202 !important;
-    box-shadow: 0 0 20px rgba(0, 255, 159, 0.6) !important;
+    background: var(--primary) !important;
+    color: var(--bg-deep) !important;
+    box-shadow: 0 0 25px rgba(0, 255, 159, 0.35) !important;
+    transform: translateY(-1px) !important;
+    border-color: var(--primary) !important;
 }
 .stButton > button:hover * {
-    color: #000000 !important;
+    color: var(--bg-deep) !important;
+}
+.stButton > button:active {
+    transform: translateY(0px) !important;
+    box-shadow: 0 0 10px rgba(0, 255, 159, 0.2) !important;
 }
 
-
-/* ── Spinner ── */
-.stSpinner > div {
-    border-color: #00ff41 transparent transparent transparent !important;
+/* ══════════════════════════════════════════════════════════════
+   CYBER LOADER — Scanning Effect
+   ══════════════════════════════════════════════════════════════ */
+.cyber-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: var(--space-xl) 0;
+    animation: msgFadeIn 0.3s ease-out;
 }
-
-/* ── Divider ── */
-hr {
-    border-color: #00ff4122 !important;
-    margin: 1rem 0 !important;
+.loader-bar {
+    width: 200px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
 }
-
-/* ── Sidebar ── */
-.sidebar-title {
-    font-family: 'Orbitron', monospace;
-    color: #00FF9F;
-    font-size: 0.9rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(0, 255, 159, 0.5);
-    padding: 0.5rem 0;
+.loader-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: scanLine 1.5s ease-in-out infinite;
 }
-
-/* ── Status indicator ── */
-.status-dot {
-    display: inline-block;
-    width: 8px; height: 8px;
+@keyframes scanLine {
+    0% { left: -40%; }
+    100% { left: 100%; }
+}
+.loader-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+}
+.loader-dots {
+    display: flex;
+    gap: 6px;
+}
+.loader-dot {
+    width: 5px; height: 5px;
+    background: var(--primary);
     border-radius: 50%;
-    background: #00ff41;
-    box-shadow: 0 0 6px #00ff41;
-    animation: pulse 2s infinite;
-    margin-right: 6px;
+    animation: dotPulse 1.4s ease-in-out infinite;
 }
-@keyframes pulse {
-    0%, 100% { opacity: 1; box-shadow: 0 0 6px #00ff41; }
-    50% { opacity: 0.4; box-shadow: 0 0 2px #00ff41; }
-}
-
-/* ── Terminal-style divider ── */
-.term-divider {
-    color: #00ff4144;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    text-align: center;
-    padding: 4px 0;
-    font-family: 'Share Tech Mono', monospace;
+.loader-dot:nth-child(2) { animation-delay: 0.2s; }
+.loader-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1.2); }
 }
 
-/* ── Quick query chips ── */
-.chip {
-    display: inline-block;
-    background: #001a08;
-    border: 1px solid #00ff4133;
-    border-radius: 3px;
-    padding: 3px 10px;
-    color: #00cc33;
-    font-size: 0.75rem;
-    font-family: 'Share Tech Mono', monospace;
-    margin: 2px;
-    cursor: pointer;
+/* ══════════════════════════════════════════════════════════════
+   WELCOME CARD
+   ══════════════════════════════════════════════════════════════ */
+.welcome-card {
+    background: var(--bg-card) !important;
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-subtle) !important;
+    border-left: 3px solid var(--info-blue) !important;
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl) var(--space-xl);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    animation: msgFadeIn 0.6s ease-out;
+}
+.welcome-card .welcome-title {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--info-blue);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+.welcome-card .capability {
+    color: var(--text-secondary);
+    margin: 4px 0;
+}
+.welcome-card .capability::before {
+    content: '›';
+    color: var(--primary);
+    margin-right: 8px;
+    font-weight: 700;
+}
+.welcome-card .hint {
+    color: var(--primary);
+    font-size: 0.82rem;
+    margin-top: 12px;
+    opacity: 0.8;
 }
 
-/* ── Metric cards in sidebar ── */
-[data-testid="stMetric"] {
-    background: #000d05 !important;
-    border: 1px solid #00ff4122 !important;
-    border-radius: 4px !important;
-    padding: 0.5rem !important;
+/* ══════════════════════════════════════════════════════════════
+   TABS — Clean Styling
+   ══════════════════════════════════════════════════════════════ */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: var(--radius-md);
+    padding: 3px;
 }
-[data-testid="stMetricLabel"] { color: #00cc33 !important; font-size: 0.7rem !important; }
-[data-testid="stMetricValue"] { color: #00ff41 !important; font-size: 1.2rem !important; }
+.stTabs [data-baseweb="tab"] {
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 1px !important;
+    color: var(--text-secondary) !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 8px 20px !important;
+    transition: all var(--transition-fast) !important;
+}
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--primary) !important;
+    background: rgba(0, 255, 159, 0.04) !important;
+}
+.stTabs [aria-selected="true"] {
+    color: var(--primary) !important;
+    background: rgba(0, 255, 159, 0.08) !important;
+}
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: var(--primary) !important;
+}
+.stTabs [data-baseweb="tab-border"] {
+    display: none !important;
+}
 
-/* ── Hide Streamlit branding ── */
+/* ══════════════════════════════════════════════════════════════
+   DIVIDERS
+   ══════════════════════════════════════════════════════════════ */
+hr {
+    border-color: var(--border-subtle) !important;
+    margin: var(--space-lg) 0 !important;
+}
+
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    margin: var(--space-md) 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SLIDERS & TOGGLES
+   ══════════════════════════════════════════════════════════════ */
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stCheckbox label,
+[data-testid="stSidebar"] .stToggle label {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.78rem !important;
+    color: var(--text-secondary) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SPINNER OVERRIDE
+   ══════════════════════════════════════════════════════════════ */
+.stSpinner > div {
+    border-color: var(--primary) transparent transparent transparent !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HIDE STREAMLIT BRANDING
+   ══════════════════════════════════════════════════════════════ */
 #MainMenu, footer { visibility: hidden; }
-header { background-color: transparent !important; }
+header { 
+    visibility: hidden; 
+    background-color: transparent !important;
+}
+header button { 
+    visibility: visible !important;
+}
 .stDeployButton { display: none !important; }
 
-/* ── Scrollbar ── */
+/* ══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ══════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #00ff4144; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #00ff41; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 255, 159, 0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 255, 159, 0.3); }
 
-/* ── Responsive adjustments ── */
+/* ══════════════════════════════════════════════════════════════
+   FORM ELEMENTS
+   ══════════════════════════════════════════════════════════════ */
+.stForm {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--space-lg) !important;
+}
+[data-testid="stFormSubmitButton"] > button {
+    background: var(--primary) !important;
+    color: var(--bg-deep) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 2px !important;
+    border: none !important;
+    border-radius: var(--radius-sm) !important;
+    padding: 10px 24px !important;
+    transition: all var(--transition-fast) !important;
+}
+[data-testid="stFormSubmitButton"] > button:hover {
+    box-shadow: 0 0 30px var(--primary-glow) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile
+   ══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
     .cyber-header h1 {
-        font-size: 1.5rem !important;
-        letter-spacing: 2px !important;
+        font-size: 1.6rem !important;
+        letter-spacing: 3px !important;
     }
-    .cyber-header p {
+    .cyber-header .subtitle {
         font-size: 0.65rem !important;
-        letter-spacing: 1px !important;
-    }
-    .main .block-container {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-        padding-top: 0.5rem !important;
-    }
-    .msg-user {
-        max-width: 95% !important;
-        padding: 8px 12px !important;
-    }
-    .msg-bot, .attack-card, .news-card {
-        max-width: 100% !important;
-        padding: 10px 14px !important;
-        font-size: 0.8rem !important;
-    }
-    .sidebar-title {
-        font-size: 0.8rem !important;
         letter-spacing: 1.5px !important;
     }
-    [data-testid="stMetricValue"] {
-        font-size: 1rem !important;
+    .main .block-container {
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+        padding-top: 1rem !important;
     }
+    .msg-user { max-width: 95% !important; padding: 10px 14px !important; }
+    .msg-bot, .attack-card, .news-card {
+        max-width: 100% !important;
+        padding: 14px 16px !important;
+        font-size: 0.82rem !important;
+    }
+    .welcome-card { padding: var(--space-md) !important; }
+    .radar { width: 80px !important; height: 80px !important; }
+    [data-testid="stMetricValue"] { font-size: 1rem !important; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR TEXT COLOR OVERRIDE
+   ══════════════════════════════════════════════════════════════ */
+[data-testid="stSidebar"] * {
+    color: var(--text-secondary) !important;
+    font-family: 'Inter', sans-serif !important;
+}
+[data-testid="stSidebar"] .sidebar-title {
+    color: var(--primary) !important;
+    font-family: 'Orbitron', monospace !important;
 }
 </style>
 
-<!-- Grid Overlay -->
-<div class="grid-overlay"></div>
-
-<style>
-.grid-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    background-size: 40px 40px;
-    background-image: 
-        linear-gradient(to right, rgba(0, 255, 159, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 255, 159, 0.05) 1px, transparent 1px);
-    pointer-events: none;
-}
-</style>
-
-<canvas id="grid-canvas"></canvas>
-
-<script>
-(function() {
-    const canvas = document.getElementById('grid-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    function resize() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-    
-    let offset = 0;
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = 'rgba(0, 255, 159, 0.15)';
-        const vanishingPointY = canvas.height * 0.4;
-        const gridSpacing = 60;
-        
-        // Vertical lines
-        for (let i = -30; i <= 30; i++) {
-            ctx.beginPath();
-            ctx.moveTo(canvas.width / 2, vanishingPointY);
-            ctx.lineTo(canvas.width / 2 + (i * gridSpacing * 5), canvas.height);
-            ctx.stroke();
-        }
-        // Horizontal lines
-        offset += 1.2;
-        if (offset > gridSpacing) offset = 0;
-        for (let i = 0; i < 20; i++) {
-            const screenY = vanishingPointY + (Math.pow(1.5, i) * (10 + offset));
-            if (screenY > canvas.height) break;
-            const alpha = Math.min(1.0, (screenY - vanishingPointY) / 300);
-            ctx.strokeStyle = `rgba(0, 255, 159, ${alpha * 0.2})`;
-            ctx.beginPath();
-            ctx.moveTo(0, screenY);
-            ctx.lineTo(canvas.width, screenY);
-            ctx.stroke();
-        }
-        requestAnimationFrame(draw);
-    }
-    draw();
-})();
-</script>
+<!-- Background overlays -->
+<div class="grid-bg"></div>
+<div class="vignette"></div>
 """
 
-# ─────────────────────────────────────────────────────────────
-#  THEME STYLE INJECTION
-# ─────────────────────────────────────────────────────────────
-def get_theme_style(theme_name):
-    theme = THEMES[theme_name]
-    style = MATRIX_STYLE_BASE
-    # Replace the base color placeholders with theme-specific values
-    style = style.replace("#00FF9F", theme["P"]).replace("#00CFFF", theme["S"])
-    style = style.replace("rgba(0, 255, 159, 0.05)", theme["UBG"]).replace("rgba(0, 207, 255, 0.05)", theme["BBG"])
-    style = style.replace("#E0E0E0", theme["T"]).replace("#FF004D", theme["A"])
-    style = style.replace("#020202", theme["BG"])
-    return style
-
-st.markdown(get_theme_style(st.session_state.theme), unsafe_allow_html=True)
+st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 
 # ════════════════════════════════════════════════════════════════
 #  IMPORTS (after streamlit setup)
@@ -607,81 +1009,20 @@ if "query_count" not in st.session_state:
 if "news_count" not in st.session_state:
     st.session_state.news_count = 0
 if "logs" not in st.session_state:
-    st.session_state.logs = ["[SYSTEM] Initializing tactical interface...", "[INFO] Secure connection established."]
+    st.session_state.logs = [
+        {"msg": "Initializing tactical interface...", "type": "system", "ts": "00:00:00"},
+        {"msg": "Secure connection established.", "type": "info", "ts": "00:00:01"},
+    ]
 if "threat_level" not in st.session_state:
     st.session_state.threat_level = 15  # Percent (Low)
 
-def add_log(msg: str):
+
+def add_log(msg: str, log_type: str = "info"):
     """Add a new timestamped log to the session state logs."""
     import datetime
     timestamp = datetime.datetime.now().strftime("%H:%M:%S")
-    st.session_state.logs.insert(0, f"[{timestamp}] {msg}")
-    st.session_state.logs = st.session_state.logs[:15]  # Keep last 15
-if "show_animation" not in st.session_state:
-    st.session_state.show_animation = "Matrix (Green)"
-
-# ════════════════════════════════════════════════════════════════
-#  THEME ANIMATION INJECTION
-# ════════════════════════════════════════════════════════════════
-if st.session_state.show_animation:
-    import streamlit.components.v1 as components
-    theme_name = st.session_state.show_animation
-    js_code = f"""
-    <script>
-        const overlay = window.parent.document.createElement("div");
-        overlay.id = "theme-anim-overlay";
-        Object.assign(overlay.style, {{
-            position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
-            zIndex: '999999', pointerEvents: 'none', overflow: 'hidden',
-            backgroundColor: 'rgba(0,0,0,0.5)', transition: 'opacity 1.5s ease-out'
-        }});
-        window.parent.document.body.appendChild(overlay);
-
-        function createParticle(content, cssProps, keyframes, duration) {{
-            const p = window.parent.document.createElement("div");
-            p.innerHTML = content;
-            Object.assign(p.style, {{ position: 'absolute', ...cssProps }});
-            overlay.appendChild(p);
-            p.animate(keyframes, {{ duration: duration, easing: 'ease-out', fill: 'forwards' }});
-        }}
-
-        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEF<>+=/*';
-        const numColumns = 60;
-        for(let i=0; i<numColumns; i++) {{
-            let colStr = '';
-            const length = 25 + Math.floor(Math.random() * 35);
-            for(let j=0; j<length; j++) {{
-                colStr += chars[Math.floor(Math.random() * chars.length)] + '<br>';
-            }}
-            
-            const isFalling = (i % 2 === 0);
-            const startY = isFalling ? '-120vh' : '120vh';
-            const endY = isFalling ? '240vh' : '-240vh'; 
-            
-            createParticle(colStr, {{ 
-                left: (i * (100 / numColumns)) + '%', 
-                top: startY, 
-                color: '#00ff41', 
-                fontFamily: '"Share Tech Mono", monospace', 
-                fontSize: (0.8 + Math.random()*0.8) + 'rem', 
-                lineHeight: '1.0',
-                textAlign: 'center',
-                textShadow: '0 0 8px #00ff41, 0 0 15px #00cc33',
-                opacity: 0.5 + Math.random()*0.5
-            }}, [
-                {{ transform: 'translateY(0)' }},
-                {{ transform: `translateY(${{endY}})` }}
-            ], 4000 + Math.random()*2000);
-        }}
-
-        setTimeout(() => {{
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 1500);
-        }}, 5000);
-    </script>
-    """
-    components.html(js_code, height=0, width=0)
-    st.session_state.show_animation = None
+    st.session_state.logs.insert(0, {"msg": msg, "type": log_type, "ts": timestamp})
+    st.session_state.logs = st.session_state.logs[:20]  # Keep last 20
 
 
 # ════════════════════════════════════════════════════════════════
@@ -719,7 +1060,7 @@ def stream_text(text: str, placeholder, delay: float = 0.005):
     """Simulate smooth streaming/typewriter effect for bot responses."""
     displayed = ""
     # Stream in small groups to reduce flicker and improve performance
-    chunk_size = 2
+    chunk_size = 3
     for i in range(0, len(text), chunk_size):
         displayed += text[i:i+chunk_size]
         placeholder.markdown(
@@ -752,54 +1093,124 @@ def render_message(role: str, content: str, msg_type: str = "rag"):
         )
 
 
+def render_cyber_loader(message: str = "SCANNING KNOWLEDGE MATRIX"):
+    """Render a cyber-themed loading indicator."""
+    return f"""
+    <div class="cyber-loader">
+        <div class="loader-dots">
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+        </div>
+        <div class="loader-bar"></div>
+        <div class="loader-text">// {message}...</div>
+    </div>
+    """
+
+
 # ════════════════════════════════════════════════════════════════
-#  SIDEBAR
+#  SIDEBAR — TACTICAL PANEL
 # ════════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.markdown(f'<div class="sidebar-title">🛡 QUANTX TACTICAL</div>', unsafe_allow_html=True)
-    
-    # --- THREAT LEVEL ---
+    st.markdown('<div class="sidebar-title">🛡 QUANTX TACTICAL</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    # ── THREAT LEVEL ──
     level = st.session_state.threat_level
-    color = "#00FF9F" if level < 30 else ("#FFC857" if level < 60 else "#FF004D")
-    label = "LOW" if level < 30 else ("ELEVATED" if level < 60 else "CRITICAL")
-    
+    if level < 30:
+        t_color = "#00FF9F"
+        t_label = "LOW"
+        t_gradient = "linear-gradient(90deg, #00FF9F, #00CC7A)"
+        t_label_bg = "rgba(0, 255, 159, 0.1)"
+    elif level < 60:
+        t_color = "#FFC857"
+        t_label = "ELEVATED"
+        t_gradient = "linear-gradient(90deg, #00FF9F, #FFC857)"
+        t_label_bg = "rgba(255, 200, 87, 0.1)"
+    else:
+        t_color = "#FF3D5A"
+        t_label = "CRITICAL"
+        t_gradient = "linear-gradient(90deg, #FFC857, #FF3D5A)"
+        t_label_bg = "rgba(255, 61, 90, 0.1)"
+
     st.markdown(f"""
-    <div class="threat-container">
-        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:{color}; font-weight:bold;">
-            <span>THREAT LEVEL</span>
-            <span>{label}</span>
+    <div class="threat-panel">
+        <div class="threat-header">
+            <span class="threat-label">THREAT LEVEL</span>
+            <span class="threat-value" style="color:{t_color}; background:{t_label_bg};">{t_label}</span>
         </div>
-        <div class="threat-bar">
-            <div class="threat-fill" style="width:{level}%; background:{color}; box-shadow:0 0 10px {color}77;"></div>
+        <div class="threat-bar-track">
+            <div class="threat-bar-fill" style="
+                width: {level}%;
+                background: {t_gradient};
+                box-shadow: 0 0 12px {t_color}44;
+            ">
+                <div style="position:absolute; right:0; top:0; width:20px; height:100%; background: {t_color}; filter:blur(4px); opacity:0.5;"></div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # --- RADAR ---
-    st.markdown('<div class="radar-box"><div class="radar"></div></div>', unsafe_allow_html=True)
+    # ── RADAR ──
+    st.markdown("""
+    <div class="radar-box">
+        <div class="radar">
+            <div class="radar-ring radar-ring-1"></div>
+            <div class="radar-ring radar-ring-2"></div>
+            <div class="radar-center"></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # --- STATUS BAR ---
+    # ── SYSTEM STATUS ──
     if st.session_state.pipeline_ready:
-        st.markdown(
-            '<div style="text-align:center; padding-bottom:10px;"><span class="status-dot"></span><small style="color:#00FF9F">SYSTEM ONLINE</small></div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">SYSTEM ONLINE</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # --- STATS ---
+    # ── STATS ──
     col1, col2 = st.columns(2)
     with col1:
         st.metric("Queries", st.session_state.query_count)
     with col2:
         st.metric("News Intel", st.session_state.news_count)
 
-    st.markdown("---")
-    st.markdown('<div class="sidebar-title">// SYSTEM LOGS</div>', unsafe_allow_html=True)
-    
-    # --- LOGS ---
-    log_html = "".join([f'<div class="log-line">{log}</div>' for log in st.session_state.logs])
-    st.markdown(f'<div class="log-container">{log_html}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-    st.markdown("---")
+    # ── SYSTEM LOGS ──
+    st.markdown('<div class="sidebar-title">// SYSTEM LOGS</div>', unsafe_allow_html=True)
+
+    log_html_parts = []
+    for log_entry in st.session_state.logs:
+        if isinstance(log_entry, dict):
+            log_type = log_entry.get("type", "info")
+            log_msg = log_entry.get("msg", "")
+            log_ts = log_entry.get("ts", "")
+        else:
+            # Legacy string format fallback
+            log_msg = str(log_entry)
+            log_type = "info"
+            if "[ALERT" in log_msg or "[ERROR" in log_msg:
+                log_type = "error"
+            elif "[WARN" in log_msg:
+                log_type = "warn"
+            elif "[SYSTEM" in log_msg:
+                log_type = "system"
+            log_ts = ""
+
+        css_class = f"log-{log_type}"
+        ts_html = f'<span class="log-timestamp">{log_ts}</span>' if log_ts else ''
+        log_html_parts.append(f'<div class="log-line {css_class}">{ts_html}{log_msg}</div>')
+
+    log_html = "".join(log_html_parts)
+    st.markdown(f'<div class="log-panel">{log_html}</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    # ── SETTINGS ──
     st.markdown('<div class="sidebar-title">// SETTINGS</div>', unsafe_allow_html=True)
 
     # Top-K slider
@@ -818,11 +1229,13 @@ with st.sidebar:
 
     # Streaming toggle
     streaming = st.toggle("Typewriter Effect", value=True)
-    
+
     # RAG toggle
     use_rag = st.toggle("Enable RAG (Knowledge Base)", value=True)
 
-    st.markdown("---")
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    # ── QUICK INTEL ──
     st.markdown('<div class="sidebar-title">// QUICK INTEL</div>', unsafe_allow_html=True)
 
     quick_queries = [
@@ -835,17 +1248,17 @@ with st.sidebar:
     ]
 
     for qq in quick_queries:
-        if st.button(f"> {qq}", key=f"quick_{qq}", use_container_width=True):
+        if st.button(f"› {qq}", key=f"quick_{qq}", use_container_width=True):
             st.session_state["pending_query"] = qq
 
-    st.markdown("---")
-    if st.button("// CLEAR TERMINAL", use_container_width=True):
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    if st.button("⟳ CLEAR TERMINAL", use_container_width=True):
         st.session_state.messages = []
         st.session_state.query_count = 0
         st.session_state.news_count = 0
+        add_log("Terminal cleared by operator.", "system")
         st.rerun()
-
-    st.markdown("---")
 
 
 # ════════════════════════════════════════════════════════════════
@@ -854,10 +1267,15 @@ with st.sidebar:
 st.markdown("""
 <div class="cyber-header">
     <h1>🛡 QUANTX AI</h1>
-    <p>// REAL-TIME THREAT INTELLIGENCE & CYBERSECURITY ADVISOR //</p>
+    <div class="subtitle">Real-Time Threat Intelligence & Cybersecurity Advisor</div>
+    <div class="header-rule"></div>
 </div>
 """, unsafe_allow_html=True)
-st.markdown('<div class="term-divider">━━━━━━━━━━━━━━━━━━ SECURE CHANNEL ESTABLISHED ━━━━━━━━━━━━━━━━━━</div>', unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="secure-bar">SECURE CHANNEL ESTABLISHED — ENCRYPTED SESSION ACTIVE</div>',
+    unsafe_allow_html=True
+)
 
 
 # ════════════════════════════════════════════════════════════════
@@ -875,46 +1293,55 @@ if not GROQ_API_KEY:
     st.stop()
 
 if not st.session_state.pipeline_ready:
-    with st.spinner("// INITIALIZING NEURAL CORE... LOADING KNOWLEDGE BASE..."):
-        try:
-            assistant, rag = load_pipeline(st.session_state.top_k)
-            st.session_state.assistant = assistant
-            st.session_state.pipeline_ready = True
-        except ValueError as e:
-            st.markdown(f"""
-            <div class="attack-card">
-            <b>[CRITICAL] Knowledge base error:</b><br>{str(e)}<br><br>
-            Add PDF or TXT files to the <code>data/</code> folder and restart.
-            </div>
-            """, unsafe_allow_html=True)
-            st.stop()
-        except Exception as e:
-            st.markdown(f"""
-            <div class="attack-card">
-            <b>[ERROR] Initialization failed:</b><br>{str(e)}
-            </div>
-            """, unsafe_allow_html=True)
-            st.stop()
+    loader_placeholder = st.empty()
+    loader_placeholder.markdown(render_cyber_loader("INITIALIZING NEURAL CORE"), unsafe_allow_html=True)
+
+    try:
+        assistant, rag = load_pipeline(st.session_state.top_k)
+        st.session_state.assistant = assistant
+        st.session_state.pipeline_ready = True
+        add_log("Neural core initialized successfully.", "info")
+        loader_placeholder.empty()
+    except ValueError as e:
+        loader_placeholder.empty()
+        st.markdown(f"""
+        <div class="attack-card">
+        <b>[CRITICAL] Knowledge base error:</b><br>{str(e)}<br><br>
+        Add PDF or TXT files to the <code>data/</code> folder and restart.
+        </div>
+        """, unsafe_allow_html=True)
+        st.stop()
+    except Exception as e:
+        loader_placeholder.empty()
+        st.markdown(f"""
+        <div class="attack-card">
+        <b>[ERROR] Initialization failed:</b><br>{str(e)}
+        </div>
+        """, unsafe_allow_html=True)
+        st.stop()
 
     st.rerun()  # Refresh to show ONLINE status
 
 
 # ════════════════════════════════════════════════════════════════
-#  CHAT HISTORY DISPLAY
+#  MAIN TABS — Chat & System Analysis
 # ════════════════════════════════════════════════════════════════
-tab1, tab2 = st.tabs(["💬 Chat & Intel", "🔍 System Analysis"])
+tab1, tab2 = st.tabs(["💬 CHAT & INTEL", "🔍 SYSTEM ANALYSIS"])
 
 with tab1:
+    # ── Chat History ──
     if not st.session_state.messages:
         st.markdown("""
-        <div class="msg-bot" style="border-left-color:#4d9fff; color:#b3d1ff;">
-        SYSTEM READY. Welcome, operator.<br><br>
-        I am your cybersecurity intelligence assistant. I can:<br>
-        — Explain any cybersecurity attack or concept<br>
-        — Identify attack types from your scenario descriptions<br>
-        — Suggest immediate protective actions<br>
-        — Fetch real-time cybersecurity news & incidents<br><br>
-        <span style="color:#00ff41">Type your query below or select from the sidebar.</span>
+        <div class="welcome-card">
+            <div class="welcome-title">SYSTEM READY — AWAITING OPERATOR INPUT</div>
+            <div>Welcome, operator. I am your cybersecurity intelligence assistant.</div>
+            <br>
+            <div class="capability">Explain any cybersecurity attack or concept</div>
+            <div class="capability">Identify attack types from your scenario descriptions</div>
+            <div class="capability">Suggest immediate protective actions</div>
+            <div class="capability">Fetch real-time cybersecurity news & incidents</div>
+            <br>
+            <div class="hint">Type your query below or select from the sidebar →</div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -923,30 +1350,26 @@ with tab1:
             render_message(msg["role"], msg["content"], msg.get("type", "rag"))
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="term-divider">──────────────────────────────────────────────</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-
-    # ════════════════════════════════════════════════════════════════
-    #  CHAT INPUT
-    # ════════════════════════════════════════════════════════════════
-    # Handle quick query buttons from sidebar
+    # ── Chat Input ──
     if "pending_query" in st.session_state:
         user_input = st.session_state.pop("pending_query")
     else:
-        user_input = st.chat_input("// ENTER QUERY — describe a scenario, ask a question, or request news...")
+        user_input = st.chat_input("Enter query — describe a scenario, ask a question, or request news...")
 
     if user_input:
         assistant = st.session_state.assistant
         st.session_state.query_count += 1
-        
+
         # Threat level logic (random fluctuation + increase on specific keywords)
         import random
         st.session_state.threat_level = min(95, max(10, st.session_state.threat_level + random.randint(-5, 8)))
         if any(w in user_input.lower() for w in ["hack", "attack", "breach", "malware", "ransomware"]):
             st.session_state.threat_level = min(100, st.session_state.threat_level + 15)
-            add_log(f"ALERT: Suspicious pattern detected in query: {user_input[:20]}...")
+            add_log(f"Suspicious pattern detected in query.", "warn")
         else:
-            add_log(f"ANALYZING: {user_input[:30]}...")
+            add_log(f"Processing operator query...", "info")
 
         # Store user message
         st.session_state.messages.append({"role": "user", "content": user_input, "type": "user"})
@@ -956,14 +1379,19 @@ with tab1:
         news_words = ["today", "recent", "latest", "news", "incident", "breach", "happened", "current"]
         is_news = any(w in user_input.lower() for w in news_words)
 
-        # Show thinking indicator
-        st.markdown('<div class="term-divider">// PROCESSING QUERY...</div>', unsafe_allow_html=True)
+        # Show cyber loader
+        loader_slot = st.empty()
+        loader_msg = "SCANNING KNOWLEDGE MATRIX" if use_rag else "PROCESSING VIA LLM"
+        loader_slot.markdown(render_cyber_loader(loader_msg), unsafe_allow_html=True)
 
-        with st.spinner("// SCANNING KNOWLEDGE MATRIX..." if use_rag else "// PROCESSING RESPONSE (LLM ONLY)..."):
-            try:
-                response = assistant.respond(user_input, use_rag=use_rag)
-            except Exception as e:
-                response = f"[ERROR] Query failed: {str(e)}\n\nIf this is a quota error, please wait or use a new API key."
+        try:
+            response = assistant.respond(user_input, use_rag=use_rag)
+            add_log("Response generated successfully.", "info")
+        except Exception as e:
+            response = f"[ERROR] Query failed: {str(e)}\n\nIf this is a quota error, please wait or use a new API key."
+            add_log(f"Error generating response.", "error")
+
+        loader_slot.empty()
 
         # Determine message type for display
         msg_type = detect_message_type(user_input, response)
@@ -976,40 +1404,53 @@ with tab1:
         })
 
         # Update counters
-        st.session_state.query_count += 1
         if is_news:
             st.session_state.news_count += 1
 
-        # Render response
+        # Render response with optional streaming
         if streaming:
             placeholder = st.empty()
-            stream_text(response, placeholder, delay=0.006)
-            # Replace with proper render after streaming
+            stream_text(response, placeholder, delay=0.005)
             placeholder.empty()
 
         render_message("assistant", response, msg_type)
-
         st.rerun()
 
+
 with tab2:
-    st.markdown('<div class="sidebar-title">// SYSTEM VULNERABILITY SCAN</div>', unsafe_allow_html=True)
-    st.markdown("<p style='color:#00cc33; font-size: 0.85rem; font-family: \"Share Tech Mono\", monospace;'>Enter your system details to receive a static vulnerability analysis without executing local system scans. This keeps your device fully private and runs smoothly via the AI CPU pipeline.</p>", unsafe_allow_html=True)
-    
+    st.markdown('<div class="sidebar-title" style="font-size:0.85rem; margin-bottom:12px;">// SYSTEM VULNERABILITY SCAN</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <p style='color: var(--text-secondary, #8A9B8F); font-size: 0.85rem; font-family: Inter, sans-serif; line-height: 1.7; margin-bottom: 20px;'>
+        Enter your system details to receive a static vulnerability analysis without executing local system scans.
+        This keeps your device fully private and runs smoothly via the AI CPU pipeline.
+    </p>
+    """, unsafe_allow_html=True)
+
     with st.form("sys_analysis_form"):
         os_val = st.text_input("Operating System", placeholder="e.g., Windows 10, macOS Sonoma, Ubuntu 22.04")
         browser_val = st.text_input("Primary Browser", placeholder="e.g., Chrome v120, Firefox, Safari")
         av_val = st.text_input("Antivirus / Security Software", placeholder="e.g., Windows Defender, None")
-        activity_val = st.text_area("Recent Suspicious Activity", placeholder="e.g., 'Computer runs exceptionally slow, weird popups, missing files...'")
-        
-        analyze_btn = st.form_submit_button("Run Analysis")
-        
+        activity_val = st.text_area(
+            "Recent Suspicious Activity",
+            placeholder="e.g., 'Computer runs exceptionally slow, weird popups, missing files...'"
+        )
+
+        analyze_btn = st.form_submit_button("⚡ Run Analysis")
+
     if analyze_btn:
         if not os_val or not browser_val:
             st.error("Please provide at least your Operating System and Browser.")
         else:
-            with st.spinner("// ANALYZING SYSTEM PARAMETERS..."):
-                analysis_result = st.session_state.assistant.analyze_system(os_val, browser_val, av_val, activity_val)
-                st.markdown(f'<div class="msg-bot" style="border-left-color:#ff4d00;">{analysis_result}</div>', unsafe_allow_html=True)
+            analysis_loader = st.empty()
+            analysis_loader.markdown(render_cyber_loader("ANALYZING SYSTEM PARAMETERS"), unsafe_allow_html=True)
 
+            analysis_result = st.session_state.assistant.analyze_system(os_val, browser_val, av_val, activity_val)
 
+            analysis_loader.empty()
+            add_log("System analysis completed.", "info")
 
+            st.markdown(
+                f'<span class="badge badge-alert">VULNERABILITY REPORT</span><br>'
+                f'<div class="msg-bot" style="border-left-color: var(--accent);">{analysis_result}</div>',
+                unsafe_allow_html=True
+            )

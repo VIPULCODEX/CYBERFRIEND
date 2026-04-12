@@ -1,6 +1,26 @@
+# ─── Secrets ──────────────────────────────
 .env
+
+# ─── Python ──────────────────────────────
 __pycache__/
-faiss_index/
+*.pyc
+*.pyo
+*.egg-info/
+
+# ─── Virtual Environments ────────────────
 .venv/
 venv/
-*.pyc
+env/
+
+# ─── FAISS Index (build artifact) ────────
+faiss_index/
+
+# ─── IDE / Editor ────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS Files ────────────────────────────
+.DS_Store
+Thumbs.db

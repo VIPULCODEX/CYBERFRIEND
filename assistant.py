@@ -11,7 +11,10 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
-from config import GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, TOP_K, NEWS_TRIGGER_WORDS
+from config import (
+    GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, 
+    TOP_K, NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS
+)
 
 # ─────────────────────────────────────────────────────
 # PROMPT TEMPLATES
@@ -41,6 +44,8 @@ Instructions:
   "I don't have enough information on this in my knowledge base. Please consult a security professional."
 
 IMPORTANT: Never guess or make up facts. Be honest when unsure.
+Keep your response concise and focused on the identified threat or question. 
+Limit your output to approximately 100-200 words.
 """)
 
 NEWS_PROMPT = ChatPromptTemplate.from_template("""You are a cybersecurity news analyst.
@@ -93,12 +98,13 @@ class CybersecurityAssistant:
     2. NewsAPI (real-time) for news/recent incidents
     """
 
-    def __init__(self, retriever):
+    def __init__(self, retriever, max_tokens=300):
         self.retriever = retriever
         self.llm = ChatGroq(
             model=LLM_MODEL,
             temperature=LLM_TEMPERATURE,
-            groq_api_key=GROQ_API_KEY
+            groq_api_key=GROQ_API_KEY,
+            max_tokens=max_tokens or LLM_MAX_TOKENS
         )
         self.output_parser = StrOutputParser()
         self._build_rag_chain()

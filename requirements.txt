@@ -34,3 +34,10 @@ tqdm
 
 # ─── Streamlit UI ─────────────────────────────────
 streamlit
+
+# ─── FastAPI Backend ──────────────────────────────
+fastapi                     # Production API framework
+uvicorn[standard]           # ASGI server for FastAPI
+
+# ─── (Optional) Load Testing ─────────────────────
+httpx                       # Async HTTP client for load_test.py
