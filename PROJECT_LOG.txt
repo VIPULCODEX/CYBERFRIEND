@@ -71,3 +71,29 @@ This document tracks the evolution of the QuantX Cybersecurity Assistant from a 
 
 =====================================
 EOF — END OF FILE
+
+--------------------------------------------------------------------------------
+8. OPERATIONAL ACTIVITY LOG (LIVE)
+--------------------------------------------------------------------------------
+- [2026-04-12] User reported runtime UI error: "[CRITICAL] Knowledge base error: No documents loaded..."
+- [2026-04-12] Investigation: Confirmed `cybersecurity_friend/data/cybersecurity_kb.txt` exists.
+- [2026-04-12] Root Cause: `DATA_DIR = "data"` and `FAISS_INDEX_PATH = "faiss_index"` were relative paths, so app startup from parent CWD resolved the wrong folder and appeared empty.
+- [2026-04-12] Fix Applied: Updated `cybersecurity_friend/config.py` to use absolute paths based on module directory:
+  - `BASE_DIR = os.path.dirname(os.path.abspath(__file__))`
+  - `load_dotenv(os.path.join(BASE_DIR, ".env"))`
+  - `DATA_DIR = os.path.join(BASE_DIR, "data")`
+  - `FAISS_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index")`
+- [2026-04-12] Environment Issue: Sandbox lacked `python` and `git` binaries (`CommandNotFoundException`) during initial validation and push.
+- [2026-04-12] Escalated Shell Check: Verified availability outside sandbox (`git version 2.53.0.windows.2`, `Python 3.13.3`).
+- [2026-04-12] Git Actions:
+  - Committed path fix on `main`: `cd7228c`
+  - First push rejected (remote ahead: non-fast-forward)
+  - Resolved by `git pull --rebase origin main`
+  - Push succeeded: `397457d..f34b916  main -> main`
+- [2026-04-12] Current State: Fix is live on GitHub (`VIPULCODEX/QUANTX`, branch `main`, commit `f34b916`).
+- [2026-04-12] User Request Recorded: Maintain ongoing updates in `PROJECT_LOG.txt` for actions and issues from this point onward.
+- [2026-04-12] UI Bug Report: Sidebar hover showed leaked text `keyboard_double...` near the left edge.
+- [2026-04-12] Fix Applied: Added targeted CSS in `cybersecurity_friend/app.py` to hide text spans inside Streamlit sidebar toggle controls:
+  - `header [data-testid="collapsedControl"] span { display:none !important; }`
+  - `header [data-testid="stSidebarCollapseButton"] span { display:none !important; }`
+- [2026-04-12] Expected Result: Sidebar toggle remains usable, but the `keyboard_double_*` hover artifact is no longer visible.

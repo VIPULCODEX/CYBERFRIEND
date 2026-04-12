@@ -922,6 +922,12 @@ header button {
 }
 .stDeployButton { display: none !important; }
 
+/* Hide leaked Material icon text like "keyboard_double_arrow_*" on sidebar toggle hover */
+header [data-testid="collapsedControl"] span,
+header [data-testid="stSidebarCollapseButton"] span {
+    display: none !important;
+}
+
 /* ══════════════════════════════════════════════════════════════
    SCROLLBAR
    ══════════════════════════════════════════════════════════════ */
