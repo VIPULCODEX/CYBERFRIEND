@@ -922,9 +922,17 @@ header button {
 }
 .stDeployButton { display: none !important; }
 
-/* Hide leaked Material icon text like "keyboard_double_arrow_*" on sidebar toggle hover */
-header [data-testid="collapsedControl"] span,
-header [data-testid="stSidebarCollapseButton"] span {
+/* Hide leaked Material icon text like "keyboard_double_arrow_*" on sidebar toggle */
+[data-testid="collapsedControl"] span,
+[data-testid="stSidebarCollapseButton"] span,
+[data-testid="stSidebarCollapsedControl"] span,
+[data-testid="baseButton-headerNoPadding"] span,
+button[kind="header"] span,
+section[data-testid="stSidebar"] button span,
+.stSidebarCollapsedControl span,
+header button span {
+    font-size: 0 !important;
+    visibility: hidden !important;
     display: none !important;
 }
 
