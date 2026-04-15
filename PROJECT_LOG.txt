@@ -117,3 +117,78 @@ EOF — END OF FILE
   - Committed: `67f5294` — "fix: remove keyboard_double_arrow text leak on sidebar toggle button"
   - Pushed to: `https://github.com/VIPULCODEX/QUANTX.git` → `main` (70662a9..67f5294)
 - [2026-04-15] Reminder Set: Keep PROJECT_LOG.txt updated with all future changes, fixes, and milestones.
+
+- [2026-04-15] User Request: Ensure every new addon/change is continuously recorded in `PROJECT_LOG.txt` during development.
+- [2026-04-15] UI Compatibility Fix: Updated sidebar toggle CSS in `cybersecurity_friend/app.py` to keep collapse/expand control visible and tappable across devices (desktop/mobile/tablet), instead of hiding all related spans globally.
+- [2026-04-15] Local Edge LLM Support Added:
+  - `cybersecurity_friend/config.py`: Added provider-based config (`LLM_PROVIDER`, `OLLAMA_MODEL`, `OLLAMA_BASE_URL`) with defaults.
+  - `cybersecurity_friend/assistant.py`: Added `ChatOllama` support and provider-aware LLM initialization (`groq` or `ollama`).
+  - `cybersecurity_friend/app.py`: Startup key validation is now provider-aware; Groq key required only when `LLM_PROVIDER=groq`. Added local-mode system log message for Ollama.
+  - `cybersecurity_friend/main.py`: CLI startup validation aligned with provider selection and local-mode informational banner.
+  - `cybersecurity_friend/api.py`: API lifespan init logs now provider-aware and no false Groq error in local Ollama mode.
+  - `cybersecurity_friend/requirements.txt`: Added `langchain-ollama` dependency.
+- [2026-04-15] Documentation Update:
+  - `README.md`: Added `.env` examples for cloud Groq mode and local Ollama edge mode.
+  - `README.md`: Added hybrid recommendation (RAG + QLoRA-style fine-tuning workflow) for cybersecurity use case.
+- [2026-04-15] Environment Blocker Observed (Current Shell):
+  - `python` / `py` unavailable (`No installed Python found`).
+  - `git` unavailable (`CommandNotFoundException`).
+  - Result: Could not run local compile checks or execute commit/push from this shell session.
+- [2026-04-15] User Hardware Constraint Confirmed:
+  - Target machine: Intel i3 + 8GB RAM.
+  - Priority: low-latency CPU inference and reliable local execution.
+- [2026-04-15] CPU-Safe Defaults Applied:
+  - `cybersecurity_friend/config.py`:
+    - `OLLAMA_MODEL` default switched to `qwen2.5:3b-instruct` for low-resource local inference.
+    - Reduced default RAG cost profile (`TOP_K=2`, chunk size/overlap tuned for lower memory/latency).
+- [2026-04-15] Hybrid 3-Tier RAG Implemented:
+  - `cybersecurity_friend/rag_pipeline.py` fully upgraded from single-index to multi-index:
+    - Static index: `data/` -> `faiss_index/`
+    - Warm index: `data_warm/` -> `faiss_index_warm/`
+    - Hot index: `data_hot/` -> `faiss_index_hot/`
+  - Added weighted hybrid retrieval (`hot > warm > static`) with deduped merged ranking.
+  - Added metadata tier tagging in retrieval context for better explainability and recency control.
+- [2026-04-15] Strict Response Behavior Updated:
+  - `cybersecurity_friend/assistant.py`:
+    - Enforced strict output format for scenario and general responses.
+    - Preserved explainability-focused behavior for system analysis path.
+    - Added retriever compatibility for both standard and hybrid retriever implementations.
+- [2026-04-15] Authentic Data Ingestion Scripts Added (Official Sources):
+  - `cybersecurity_friend/data_ingestion/fetch_hot_index_data.py`
+    - CISA KEV JSON feed
+    - NVD CVE API v2
+    - Outputs to `data_hot/*.txt`
+  - `cybersecurity_friend/data_ingestion/fetch_warm_index_data.py`
+    - MITRE ATT&CK enterprise STIX (official MITRE CTI repository)
+    - NIST PQC standards references (FIPS 203/204/205 landing pages)
+    - Outputs to `data_warm/*.txt`
+  - `cybersecurity_friend/data_ingestion/rebuild_hybrid_index.py`
+    - Rebuilds static + warm + hot FAISS indices.
+- [2026-04-15] Documentation Updated:
+  - `README.md` now includes:
+    - CPU-first local model recommendation (`qwen2.5:3b-instruct`)
+    - Hybrid RAG tier structure and ingestion commands
+    - i3/8GB operational guidance.
+- [2026-04-16] Rollback Safety Added:
+  - Created `ROLLBACK_GUIDE.md` at repository root.
+  - Added command-driven rollback playbook:
+    - checkpoint commits
+    - safe `git revert` / `git restore` flows
+    - module-level rollback blocks (UI, local provider, hybrid RAG)
+    - no-git emergency backup/restore copy method.
+  - Objective: ensure all ongoing work can be safely undone if regressions appear.
+- [2026-04-16] User Direction Update:
+  - Prioritized RAG completion first.
+  - Requested rollback of local/Ollama model integration due current retrieval validation issues.
+- [2026-04-16] Rollback Applied (Local LLM/Ollama):
+  - `cybersecurity_friend/config.py`: Removed provider-switch config (`LLM_PROVIDER`, `OLLAMA_MODEL`, `OLLAMA_BASE_URL`).
+  - `cybersecurity_friend/assistant.py`: Removed `ChatOllama` path; restored Groq-only LLM initialization.
+  - `cybersecurity_friend/app.py`: Removed provider-conditional startup logic; restored direct Groq key validation.
+  - `cybersecurity_friend/api.py`: Removed provider-conditional logging; restored Groq-centric startup checks.
+  - `cybersecurity_friend/main.py`: Removed provider branching and local-model startup banner.
+  - `cybersecurity_friend/requirements.txt`: Removed `langchain-ollama`.
+  - `README.md`: Removed local model sections; kept RAG-focused setup/docs.
+- [2026-04-16] RAG Review / Reliability Improvements:
+  - Added `get_index_status()` in `cybersecurity_friend/rag_pipeline.py` for index diagnostics.
+  - Added `GET /api/rag/status` in `cybersecurity_friend/api.py` to inspect loaded/on-disk index state (static/warm/hot).
+  - Updated CLI rebuild flow in `cybersecurity_friend/main.py` to rebuild hybrid indices (`build_all_indexes`) instead of only static index.

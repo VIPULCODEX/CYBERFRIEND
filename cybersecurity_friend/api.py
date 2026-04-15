@@ -21,7 +21,7 @@ from typing import Optional
 
 from rag_pipeline import RAGPipeline
 from assistant import CybersecurityAssistant
-from config import TOP_K, GROQ_API_KEY, LLM_MAX_TOKENS, LLM_PROVIDER, OLLAMA_MODEL
+from config import TOP_K, GROQ_API_KEY, LLM_MAX_TOKENS
 from security import validate_query, rate_limiter, get_client_id
 from cache_manager import cache_manager
 
@@ -40,23 +40,22 @@ logger.setLevel(logging.INFO)  # API module gets INFO for operational visibility
 # Pipeline Lifecycle (startup / shutdown)
 # ─────────────────────────────────────────────────────
 assistant_instance: Optional[CybersecurityAssistant] = None
+rag_instance: Optional[RAGPipeline] = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize RAG pipeline on startup, clean up on shutdown."""
-    global assistant_instance
+    global assistant_instance, rag_instance
 
-    if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
+    if not GROQ_API_KEY:
         logger.error("GROQ_API_KEY is not set. API will fail to generate responses.")
-    elif LLM_PROVIDER == "ollama":
-        logger.info("Using local Ollama model: %s", OLLAMA_MODEL)
 
     try:
         logger.info("Initializing QuantX Neural Core...")
-        rag = RAGPipeline()
-        rag.initialize()
-        retriever = rag.get_retriever(k=TOP_K)
+        rag_instance = RAGPipeline()
+        rag_instance.initialize()
+        retriever = rag_instance.get_retriever(k=TOP_K)
         assistant_instance = CybersecurityAssistant(retriever, max_tokens=LLM_MAX_TOKENS)
         logger.info("Backend ready.")
     except Exception as e:
@@ -195,3 +194,11 @@ def health_check():
 def cache_stats():
     """Returns cache hit/miss stats for monitoring. No user data exposed."""
     return cache_manager.stats()
+
+
+@app.get("/api/rag/status")
+def rag_status():
+    """Returns loaded RAG index diagnostics for troubleshooting retrieval issues."""
+    if rag_instance is None:
+        return {"pipeline_ready": False, "message": "RAG not initialized"}
+    return rag_instance.get_index_status()

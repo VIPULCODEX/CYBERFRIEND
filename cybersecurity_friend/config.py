@@ -19,17 +19,9 @@ NEWS_API_KEY   = os.getenv("NEWS_API_KEY", "")
 # ─────────────────────────────────────────
 # LLM Settings (Groq + Llama)
 # ─────────────────────────────────────────
-# LLM Provider: "groq" (cloud) or "ollama" (local edge)
-LLM_PROVIDER    = os.getenv("LLM_PROVIDER", "groq").strip().lower()
-
-# Groq model (used when LLM_PROVIDER=groq)
 LLM_MODEL       = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 LLM_TEMPERATURE = 0.3                        # Lower = more factual
 LLM_MAX_TOKENS  = 250                        # Keep responses concise
-
-# Local Ollama model (used when LLM_PROVIDER=ollama)
-OLLAMA_MODEL    = os.getenv("OLLAMA_MODEL", "qwen2.5:3b-instruct")
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 # ─────────────────────────────────────────
 # Embedding Settings

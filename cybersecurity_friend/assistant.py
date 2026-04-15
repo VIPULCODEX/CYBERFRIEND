@@ -6,7 +6,6 @@ Formats responses for cybersecurity scenarios and general queries.
 
 import os
 from langchain_groq import ChatGroq
-from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
@@ -14,8 +13,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
 from config import (
     GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, TOP_K,
-    NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS, LLM_PROVIDER,
-    OLLAMA_MODEL, OLLAMA_BASE_URL
+    NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS
 )
 
 # ─────────────────────────────────────────────────────
@@ -111,26 +109,14 @@ class CybersecurityAssistant:
 
     def __init__(self, retriever, max_tokens=300):
         self.retriever = retriever
-        self.llm = self._build_llm(max_tokens=max_tokens or LLM_MAX_TOKENS)
-        self.output_parser = StrOutputParser()
-        self._build_rag_chain()
-
-    def _build_llm(self, max_tokens: int):
-        """Create LLM client based on configured provider."""
-        if LLM_PROVIDER == "ollama":
-            return ChatOllama(
-                model=OLLAMA_MODEL,
-                base_url=OLLAMA_BASE_URL,
-                temperature=LLM_TEMPERATURE,
-                num_predict=max_tokens,
-            )
-
-        return ChatGroq(
+        self.llm = ChatGroq(
             model=LLM_MODEL,
             temperature=LLM_TEMPERATURE,
             groq_api_key=GROQ_API_KEY,
-            max_tokens=max_tokens
+            max_tokens=max_tokens or LLM_MAX_TOKENS
         )
+        self.output_parser = StrOutputParser()
+        self._build_rag_chain()
 
     # ──────────────────────────────────────
     # RAG Chain

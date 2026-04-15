@@ -1029,7 +1029,7 @@ st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 # ════════════════════════════════════════════════════════════════
 #  IMPORTS (after streamlit setup)
 # ════════════════════════════════════════════════════════════════
-from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K, LLM_PROVIDER, OLLAMA_MODEL
+from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
 
 # ════════════════════════════════════════════════════════════════
 #  SESSION STATE INIT
@@ -1319,7 +1319,7 @@ st.markdown(
 # ════════════════════════════════════════════════════════════════
 #  PIPELINE INIT
 # ════════════════════════════════════════════════════════════════
-if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
+if not GROQ_API_KEY:
     st.markdown("""
     <div class="attack-card">
     <b>[ERROR] GROQ_API_KEY not found.</b><br><br>
@@ -1329,9 +1329,6 @@ if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
     </div>
     """, unsafe_allow_html=True)
     st.stop()
-
-if LLM_PROVIDER == "ollama":
-    add_log(f"Running in local mode with Ollama model: {OLLAMA_MODEL}", "system")
 
 if not st.session_state.pipeline_ready:
     loader_placeholder = st.empty()

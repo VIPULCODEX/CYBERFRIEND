@@ -198,3 +198,30 @@ class RAGPipeline:
         ]
         available = [(name, store, wt) for name, store, wt in stores if store is not None]
         return HybridRetriever(available, k=k)
+
+    def get_index_status(self) -> dict:
+        """Provide basic diagnostics on which indices are available on disk and in memory."""
+        def _index_exists(path: str) -> bool:
+            return os.path.exists(os.path.join(path, "index.faiss"))
+
+        return {
+            "pipeline_ready": self.vector_store is not None,
+            "paths": {
+                "static_data_dir": DATA_DIR,
+                "warm_data_dir": WARM_DATA_DIR,
+                "hot_data_dir": HOT_DATA_DIR,
+                "static_index_path": FAISS_INDEX_PATH,
+                "warm_index_path": FAISS_WARM_INDEX_PATH,
+                "hot_index_path": FAISS_HOT_INDEX_PATH,
+            },
+            "disk_indices": {
+                "static": _index_exists(FAISS_INDEX_PATH),
+                "warm": _index_exists(FAISS_WARM_INDEX_PATH),
+                "hot": _index_exists(FAISS_HOT_INDEX_PATH),
+            },
+            "loaded_indices": {
+                "static": self.static_store is not None,
+                "warm": self.warm_store is not None,
+                "hot": self.hot_store is not None,
+            },
+        }

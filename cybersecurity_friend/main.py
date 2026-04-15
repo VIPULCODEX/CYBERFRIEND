@@ -20,16 +20,13 @@ load_dotenv()
 # ─────────────────────────────────────────────────────
 # Validate required configuration
 # ─────────────────────────────────────────────────────
-from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K, LLM_PROVIDER, OLLAMA_MODEL
+from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
 
-if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
+if not GROQ_API_KEY:
     print("\n[X] ERROR: GROQ_API_KEY is missing!")
     print("    Create a .env file with: GROQ_API_KEY=your_key_here")
     print("    Get your key at: https://console.groq.com/keys\n")
     sys.exit(1)
-
-if LLM_PROVIDER == "ollama":
-    print(f"[INFO] Local LLM mode enabled via Ollama model: {OLLAMA_MODEL}")
 
 if not NEWS_API_KEY:
     print("⚠️  WARNING: NEWS_API_KEY not set. Real-time news features will be disabled.")
@@ -122,14 +119,14 @@ def main():
                 continue
 
             elif user_input.lower() == "rebuild":
-                print("\n🔨 Rebuilding knowledge base index from data/...")
+                print("\nRebuilding hybrid knowledge base indices...")
                 try:
-                    rag.build_index()
+                    rag.build_all_indexes()
                     retriever = rag.get_retriever(k=TOP_K)
                     assistant = CybersecurityAssistant(retriever)
-                    print("✅ Index rebuilt and assistant updated!\n")
+                    print("Index rebuilt and assistant updated!\n")
                 except ValueError as e:
-                    print(f"❌ {e}\n")
+                    print(f"Error: {e}\n")
                 continue
 
             # ── Main Query ──
@@ -190,3 +187,5 @@ def print_resource_guide():
 
 if __name__ == "__main__":
     main()
+
+
