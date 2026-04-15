@@ -1,7 +1,7 @@
 🛡 QUANTX AI — PROJECT MILESTONE LOG
 =====================================
 Status: Production-Ready (Draft V1)
-Last Updated: 2026-04-12
+Last Updated: 2026-04-15
 
 This document tracks the evolution of the QuantX Cybersecurity Assistant from a basic prototype to a multi-platform production-grade service.
 
@@ -97,3 +97,23 @@ EOF — END OF FILE
   - `header [data-testid="collapsedControl"] span { display:none !important; }`
   - `header [data-testid="stSidebarCollapseButton"] span { display:none !important; }`
 - [2026-04-12] Expected Result: Sidebar toggle remains usable, but the `keyboard_double_*` hover artifact is no longer visible.
+- [2026-04-12] Deployment Planning: Reviewed `cybersecurity_friend/render.yaml` and `cybersecurity_friend/Dockerfile` for cloud rollout.
+- [2026-04-12] Observation: `render.yaml` defines two Python web services (`quantx-api`, `quantx-ui`) with env vars for `GROQ_API_KEY` and `NEWS_API_KEY`.
+- [2026-04-12] Next Action: Provide user with free-tier deployment strategy and GitHub linking flow for API + Streamlit + Flutter distribution.
+
+- [2026-04-15] UI Bug Re-reported: "keyboard_double_arrow_right/left" text still visible on top-right of sidebar toggle button.
+- [2026-04-15] Root Cause: Previous CSS fix used `header [data-testid="..."] span` which only matched buttons rendered under <header>; Streamlit renders the same button under the sidebar section in newer versions, escaping the selector.
+- [2026-04-15] Fix Applied: Expanded CSS ruleset in `cybersecurity_friend/app.py` to cover all Streamlit sidebar toggle DOM locations:
+  - `[data-testid="collapsedControl"] span`
+  - `[data-testid="stSidebarCollapseButton"] span`
+  - `[data-testid="stSidebarCollapsedControl"] span`
+  - `[data-testid="baseButton-headerNoPadding"] span`
+  - `button[kind="header"] span`
+  - `section[data-testid="stSidebar"] button span`
+  - `header button span`
+  - Added `font-size: 0` and `visibility: hidden` as fallbacks alongside `display: none`.
+- [2026-04-15] Git Actions:
+  - Staged: `app.py`
+  - Committed: `67f5294` — "fix: remove keyboard_double_arrow text leak on sidebar toggle button"
+  - Pushed to: `https://github.com/VIPULCODEX/QUANTX.git` → `main` (70662a9..67f5294)
+- [2026-04-15] Reminder Set: Keep PROJECT_LOG.txt updated with all future changes, fixes, and milestones.
