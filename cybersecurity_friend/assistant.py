@@ -6,21 +6,23 @@ Formats responses for cybersecurity scenarios and general queries.
 
 import os
 from langchain_groq import ChatGroq
+from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
 from config import (
-    GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, 
-    TOP_K, NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS
+    GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, TOP_K,
+    NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS, LLM_PROVIDER,
+    OLLAMA_MODEL, OLLAMA_BASE_URL
 )
 
 # ─────────────────────────────────────────────────────
 # PROMPT TEMPLATES
 # ─────────────────────────────────────────────────────
 
-RAG_PROMPT = ChatPromptTemplate.from_template("""You are a friendly and knowledgeable cybersecurity expert assistant.
+RAG_PROMPT = ChatPromptTemplate.from_template("""You are a cybersecurity assistant.
 Use ONLY the following context from the knowledge base to answer the user's question.
 
 Context:
@@ -34,18 +36,27 @@ Instructions:
 
   Attack Type: [identify the most likely attack]
   Explanation: [explain it clearly in simple language]
-  What to Do: [give 3–5 concrete steps the user should take]
+  What to Do:
+  - [step 1]
+  - [step 2]
+  - [step 3]
   Confidence: [High / Medium / Low – based on context match] (L2 Distance: [Include the L2 Distance of the most relevant chunk used])
 
 - If it is a GENERAL CYBERSECURITY QUESTION (e.g., "What is phishing?", "How does ransomware work?"):
-  Give a clear, educational answer.
+  Respond in EXACTLY this format:
+  Answer: [2-5 concise lines]
+  Key Points:
+  - [point 1]
+  - [point 2]
+  - [point 3]
 
 - If the answer is NOT in the context, respond with:
   "I don't have enough information on this in my knowledge base. Please consult a security professional."
 
-IMPORTANT: Never guess or make up facts. Be honest when unsure.
-Keep your response concise and focused on the identified threat or question. 
-Limit your output to approximately 100-200 words.
+IMPORTANT:
+- Never guess or make up facts.
+- Keep response strict and concise.
+- Do not add extra sections beyond the required format.
 """)
 
 NEWS_PROMPT = ChatPromptTemplate.from_template("""You are a cybersecurity news analyst.
@@ -100,14 +111,26 @@ class CybersecurityAssistant:
 
     def __init__(self, retriever, max_tokens=300):
         self.retriever = retriever
-        self.llm = ChatGroq(
+        self.llm = self._build_llm(max_tokens=max_tokens or LLM_MAX_TOKENS)
+        self.output_parser = StrOutputParser()
+        self._build_rag_chain()
+
+    def _build_llm(self, max_tokens: int):
+        """Create LLM client based on configured provider."""
+        if LLM_PROVIDER == "ollama":
+            return ChatOllama(
+                model=OLLAMA_MODEL,
+                base_url=OLLAMA_BASE_URL,
+                temperature=LLM_TEMPERATURE,
+                num_predict=max_tokens,
+            )
+
+        return ChatGroq(
             model=LLM_MODEL,
             temperature=LLM_TEMPERATURE,
             groq_api_key=GROQ_API_KEY,
-            max_tokens=max_tokens or LLM_MAX_TOKENS
+            max_tokens=max_tokens
         )
-        self.output_parser = StrOutputParser()
-        self._build_rag_chain()
 
     # ──────────────────────────────────────
     # RAG Chain
@@ -116,17 +139,25 @@ class CybersecurityAssistant:
         """Build the LangChain RAG chain."""
 
         def retrieve_context(query: str) -> str:
-            """Retrieve relevant docs and join them into a single context string with L2 distance."""
-            vectorstore = self.retriever.vectorstore
-            k = self.retriever.search_kwargs.get("k", 4)
-            docs_and_scores = vectorstore.similarity_search_with_score(query, k=k)
+            """Retrieve relevant docs and join into one context string with score hints."""
+            k = getattr(self.retriever, "search_kwargs", {}).get("k", 4)
+            if hasattr(self.retriever, "similarity_search_with_score"):
+                docs_and_scores = self.retriever.similarity_search_with_score(query, k=k)
+            elif hasattr(self.retriever, "vectorstore"):
+                docs_and_scores = self.retriever.vectorstore.similarity_search_with_score(query, k=k)
+            else:
+                docs = self.retriever.get_relevant_documents(query)
+                docs_and_scores = [(d, 0.0) for d in docs[:k]]
             
             if not docs_and_scores:
                 return "No relevant information found in knowledge base."
             
             context_parts = []
             for doc, score in docs_and_scores:
-                context_parts.append(f"[L2 Distance: {score:.4f}]\n{doc.page_content}")
+                tier = doc.metadata.get("tier", "static") if doc.metadata else "static"
+                context_parts.append(
+                    f"[Tier: {tier} | L2 Distance: {score:.4f}]\n{doc.page_content}"
+                )
                 
             return "\n\n".join(context_parts)
 
@@ -187,8 +218,15 @@ class CybersecurityAssistant:
         print("  [*] Answering directly via LLM...")
         try:
             general_prompt = ChatPromptTemplate.from_template(
-                "You are a friendly and knowledgeable cybersecurity expert assistant. "
-                "Answer the user's question clearly and accurately.\n\nUser Question: {question}"
+                "You are a cybersecurity assistant. "
+                "Respond in strict format only.\n\n"
+                "User Question: {question}\n\n"
+                "Format:\n"
+                "Answer: [2-5 concise lines]\n"
+                "Key Points:\n"
+                "- [point 1]\n"
+                "- [point 2]\n"
+                "- [point 3]"
             )
             chain = general_prompt | self.llm | self.output_parser
             return chain.invoke({"question": query})

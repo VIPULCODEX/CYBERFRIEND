@@ -37,6 +37,15 @@ Create a `.env` file in the root directory:
 ```env
 GROQ_API_KEY=your_groq_key_here
 NEWS_API_KEY=your_newsapi_key_here
+LLM_PROVIDER=groq
+LLM_MODEL=llama-3.3-70b-versatile
+```
+
+For local edge inference (no cloud LLM), use:
+```env
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=qwen2.5:3b-instruct
+OLLAMA_BASE_URL=http://localhost:11434
 ```
 
 ### 4. Running the Project
@@ -50,6 +59,43 @@ uvicorn api:app --host 0.0.0.0 --port 8000
 ```bash
 streamlit run app.py
 ```
+
+## Edge Model + RAG Recommendation
+
+For user-device / edge computing, this stack is recommended:
+
+- **Base local model**: `qwen2.5:7b-instruct` (best quality-speed tradeoff on CPU/GPU laptops)
+- **Low-RAM fallback**: `phi3:mini`
+- **RAG embeddings**: `sentence-transformers/all-MiniLM-L6-v2` (already used, CPU-friendly)
+- **Vector DB**: FAISS CPU (already used)
+
+Fine-tuning strategy (practical and efficient):
+
+1. Start with strong RAG first (domain docs + clean chunking + metadata).
+2. Fine-tune only for response style/format using **QLoRA** (4-bit) on 7B model.
+3. Train on your incident-response format (Attack Type / Explanation / What to Do / Confidence).
+4. Export adapter + merge (or keep LoRA adapter) and serve via Ollama.
+5. Keep RAG enabled even after fine-tuning for freshness and factual grounding.
+
+## Hybrid RAG (Static + Warm + Hot)
+
+Folder tiers:
+- `data/` -> static foundational knowledge (already present)
+- `data_warm/` -> curated standards/techniques (monthly refresh)
+- `data_hot/` -> latest intel/vuln data (daily refresh)
+
+Run data ingestion scripts (official sources):
+```bash
+cd cybersecurity_friend
+python data_ingestion/fetch_warm_index_data.py
+python data_ingestion/fetch_hot_index_data.py
+python data_ingestion/rebuild_hybrid_index.py
+```
+
+CPU-first guidance for i3 + 8GB:
+- Keep `OLLAMA_MODEL=qwen2.5:3b-instruct` for stable local inference.
+- Use `TOP_K=2`, chunk size near 350-400.
+- Use 7B model only if latency is acceptable on your machine.
 
 ## 📈 Architecture
 

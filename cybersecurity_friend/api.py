@@ -21,7 +21,7 @@ from typing import Optional
 
 from rag_pipeline import RAGPipeline
 from assistant import CybersecurityAssistant
-from config import TOP_K, GROQ_API_KEY, LLM_MAX_TOKENS
+from config import TOP_K, GROQ_API_KEY, LLM_MAX_TOKENS, LLM_PROVIDER, OLLAMA_MODEL
 from security import validate_query, rate_limiter, get_client_id
 from cache_manager import cache_manager
 
@@ -47,8 +47,10 @@ async def lifespan(app: FastAPI):
     """Initialize RAG pipeline on startup, clean up on shutdown."""
     global assistant_instance
 
-    if not GROQ_API_KEY:
+    if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
         logger.error("GROQ_API_KEY is not set. API will fail to generate responses.")
+    elif LLM_PROVIDER == "ollama":
+        logger.info("Using local Ollama model: %s", OLLAMA_MODEL)
 
     try:
         logger.info("Initializing QuantX Neural Core...")

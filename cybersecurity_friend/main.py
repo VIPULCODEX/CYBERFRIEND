@@ -20,13 +20,16 @@ load_dotenv()
 # ─────────────────────────────────────────────────────
 # Validate required configuration
 # ─────────────────────────────────────────────────────
-from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
+from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K, LLM_PROVIDER, OLLAMA_MODEL
 
-if not GROQ_API_KEY:
+if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
     print("\n[X] ERROR: GROQ_API_KEY is missing!")
     print("    Create a .env file with: GROQ_API_KEY=your_key_here")
     print("    Get your key at: https://console.groq.com/keys\n")
     sys.exit(1)
+
+if LLM_PROVIDER == "ollama":
+    print(f"[INFO] Local LLM mode enabled via Ollama model: {OLLAMA_MODEL}")
 
 if not NEWS_API_KEY:
     print("⚠️  WARNING: NEWS_API_KEY not set. Real-time news features will be disabled.")

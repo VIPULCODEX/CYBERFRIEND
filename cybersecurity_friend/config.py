@@ -19,9 +19,17 @@ NEWS_API_KEY   = os.getenv("NEWS_API_KEY", "")
 # ─────────────────────────────────────────
 # LLM Settings (Groq + Llama)
 # ─────────────────────────────────────────
-LLM_MODEL       = "llama-3.3-70b-versatile"  # Fast on Groq free tier
+# LLM Provider: "groq" (cloud) or "ollama" (local edge)
+LLM_PROVIDER    = os.getenv("LLM_PROVIDER", "groq").strip().lower()
+
+# Groq model (used when LLM_PROVIDER=groq)
+LLM_MODEL       = os.getenv("LLM_MODEL", "llama-3.3-70b-versatile")
 LLM_TEMPERATURE = 0.3                        # Lower = more factual
 LLM_MAX_TOKENS  = 250                        # Keep responses concise
+
+# Local Ollama model (used when LLM_PROVIDER=ollama)
+OLLAMA_MODEL    = os.getenv("OLLAMA_MODEL", "qwen2.5:3b-instruct")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
 # ─────────────────────────────────────────
 # Embedding Settings
@@ -31,15 +39,27 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # CPU-friendly
 # ─────────────────────────────────────────
 # RAG / Chunking Settings
 # ─────────────────────────────────────────
-CHUNK_SIZE    = 500
-CHUNK_OVERLAP = 100
-TOP_K         = 3   # Number of chunks to retrieve
+# i3 + 8GB RAM friendly defaults
+CHUNK_SIZE    = int(os.getenv("CHUNK_SIZE", "380"))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "70"))
+TOP_K         = int(os.getenv("TOP_K", "2"))   # Number of chunks to retrieve
 
 # ─────────────────────────────────────────
 # File Paths
 # ─────────────────────────────────────────
 DATA_DIR         = os.path.join(BASE_DIR, "data")         # Put your PDF/TXT files here
 FAISS_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index")  # Auto-created when index is built
+
+# Hybrid multi-index RAG directories
+WARM_DATA_DIR = os.path.join(BASE_DIR, "data_warm")
+HOT_DATA_DIR = os.path.join(BASE_DIR, "data_hot")
+FAISS_WARM_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index_warm")
+FAISS_HOT_INDEX_PATH = os.path.join(BASE_DIR, "faiss_index_hot")
+
+# Weighted retrieval priorities (hot > warm > static by default)
+RAG_WEIGHT_STATIC = float(os.getenv("RAG_WEIGHT_STATIC", "1.0"))
+RAG_WEIGHT_WARM = float(os.getenv("RAG_WEIGHT_WARM", "1.12"))
+RAG_WEIGHT_HOT = float(os.getenv("RAG_WEIGHT_HOT", "1.28"))
 
 # ─────────────────────────────────────────
 # Cache Settings

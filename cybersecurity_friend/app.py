@@ -922,18 +922,26 @@ header button {
 }
 .stDeployButton { display: none !important; }
 
-/* Hide leaked Material icon text like "keyboard_double_arrow_*" on sidebar toggle */
+/* Keep sidebar toggle visible and tappable on mobile/tablet. */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="baseButton-headerNoPadding"],
+button[kind="header"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 200, 87, 0.12) !important;
+}
 [data-testid="collapsedControl"] span,
 [data-testid="stSidebarCollapseButton"] span,
 [data-testid="stSidebarCollapsedControl"] span,
 [data-testid="baseButton-headerNoPadding"] span,
 button[kind="header"] span,
-section[data-testid="stSidebar"] button span,
-.stSidebarCollapsedControl span,
 header button span {
-    font-size: 0 !important;
-    visibility: hidden !important;
-    display: none !important;
+    font-size: 0.95rem !important;
+    visibility: visible !important;
+    display: inline !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1021,7 +1029,7 @@ st.markdown(PREMIUM_CSS, unsafe_allow_html=True)
 # ════════════════════════════════════════════════════════════════
 #  IMPORTS (after streamlit setup)
 # ════════════════════════════════════════════════════════════════
-from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
+from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K, LLM_PROVIDER, OLLAMA_MODEL
 
 # ════════════════════════════════════════════════════════════════
 #  SESSION STATE INIT
@@ -1311,7 +1319,7 @@ st.markdown(
 # ════════════════════════════════════════════════════════════════
 #  PIPELINE INIT
 # ════════════════════════════════════════════════════════════════
-if not GROQ_API_KEY:
+if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
     st.markdown("""
     <div class="attack-card">
     <b>[ERROR] GROQ_API_KEY not found.</b><br><br>
@@ -1321,6 +1329,9 @@ if not GROQ_API_KEY:
     </div>
     """, unsafe_allow_html=True)
     st.stop()
+
+if LLM_PROVIDER == "ollama":
+    add_log(f"Running in local mode with Ollama model: {OLLAMA_MODEL}", "system")
 
 if not st.session_state.pipeline_ready:
     loader_placeholder = st.empty()
