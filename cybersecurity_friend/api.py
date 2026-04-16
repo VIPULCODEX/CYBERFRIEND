@@ -45,12 +45,13 @@ logger = logging.getLogger("quantx.api")
 logger.setLevel(logging.INFO)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Concurrency Controls
+# Concurrency Controls (Scaled dynamically based on multi-key pool size)
 # ─────────────────────────────────────────────────────────────────────────────
-# How many simultaneous LLM calls we allow before queuing.
-# Groq free tier ≈ 30 req/min => 1 req every 2s => 10 concurrent is safe.
-# Raise to 20–30 on a paid Groq tier.
-MAX_CONCURRENT_LLM_CALLS = int(10)
+from config import TOP_K, GROQ_API_KEY, GROQ_API_KEY_LIST, LLM_MAX_TOKENS
+
+# Groq free tier ≈ 30 req/min => We assign 10 concurrent slots per API key.
+# If you provide 4 keys, local queue handles up to 40 seamless concurrent requests.
+MAX_CONCURRENT_LLM_CALLS = int(10 * max(1, len(GROQ_API_KEY_LIST)))
 
 # Max seconds a request will wait in the semaphore queue before giving up.
 QUEUE_TIMEOUT_S = 30.0
