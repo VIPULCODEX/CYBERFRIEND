@@ -181,12 +181,28 @@ class RAGPipeline:
         return self.vector_store is not None
 
     def initialize(self):
-        """Load existing hybrid indices, else build from available tier directories."""
-        if self.load_all_indexes():
-            print("[OK] Hybrid indices loaded.")
-            return
-        print("[i] No saved indices found. Building hybrid indices...")
-        self.build_all_indexes()
+        """Load existing hybrid indices, and auto-build if populated directories are missing indices."""
+        self.load_all_indexes()
+        
+        # Check if we have files in a directory but no corresponding FAISS index loaded
+        rebuild_needed = False
+        def has_files(d: str) -> bool:
+            return os.path.exists(d) and any(f.endswith((".pdf", ".txt")) for f in os.listdir(d))
+            
+        if has_files(DATA_DIR) and self.static_store is None:
+            rebuild_needed = True
+        if has_files(WARM_DATA_DIR) and self.warm_store is None:
+            rebuild_needed = True
+        if has_files(HOT_DATA_DIR) and self.hot_store is None:
+            rebuild_needed = True
+            
+        if rebuild_needed:
+            print("[i] Detected unindexed documents! Building hybrid indices...")
+            self.build_all_indexes()
+        elif self.vector_store is not None:
+            print("[OK] Hybrid indices loaded from disk.")
+        else:
+            print("[!] No indices and no documents found. Please add PDF/TXT files to data/ directories.")
 
     def get_retriever(self, k: int = TOP_K):
         if self.vector_store is None:
