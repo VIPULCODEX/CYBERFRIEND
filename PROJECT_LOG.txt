@@ -213,3 +213,16 @@ EOF — END OF FILE
   - Modified cybersecurity_friend/Dockerfile strictly for Hugging Face compatibility (non-root UID 1000, port 7860, Gunicorn workers).
 - [2026-04-16] Automated CI/CD Setup:
   - Created .github/workflows/hf_sync.yml to fully automate future deployments on push.
+- [2026-04-16] Deployment Security Updates:
+  - Redacted actual API keys from cybersecurity_friend/.env.example to resolve GitHub secret leaks.
+  - API Keys for backend dependencies (Groq, NewsAPI) synced securely to Hugging Face 'Variables and secrets' bypassing repository tracking for max security.
+
+- [2026-04-16] HF Deployment Issue 1: Missing Space Configuration.
+  - Issue: Space showed setup configuration screen instead of building.
+  - Root Cause: Force-pushing custom codebase deleted HF default README.md, stripping the metadata required to infer the SDK type.
+  - Fix Applied: Created cybersecurity_friend/README.md with YAML frontmatter sdk: docker.
+
+- [2026-04-16] HF Deployment Issue 2: Docker apt-get Build Error.
+  - Issue: Unable to locate package software-properties-common during Docker build.
+  - Root Cause: Base image python:3.10-slim updated its Debian version, dropping the package from its default repos.
+  - Fix Applied: Removed software-properties-common from Dockerfile as it is only needed for PPAs and not required for FAISS compiling.

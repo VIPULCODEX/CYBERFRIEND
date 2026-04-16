@@ -12,7 +12,7 @@ class ApiMessage {
 
 class ApiService with ChangeNotifier {
   // Update this URL once you deploy to Render/Railway
-  String _baseUrl = "http://10.0.2.2:8000"; // Default for Android Emulator to host
+  String _baseUrl = "https://vipulcdex-quantx.hf.space"; // Connected to Live Hugging Face 16GB Backend
   
   final List<ApiMessage> _messages = [];
   bool _isLoading = false;
