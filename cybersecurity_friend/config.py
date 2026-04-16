@@ -13,7 +13,16 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))  # Load local .env file
 # ─────────────────────────────────────────
 # API Keys (loaded from .env)
 # ─────────────────────────────────────────
-GROQ_API_KEY   = os.getenv("GROQ_API_KEY", "")
+_raw_keys = os.getenv("GROQ_API_KEYS", "")
+if _raw_keys:
+    GROQ_API_KEY_LIST = [k.strip() for k in _raw_keys.split(",") if k.strip()]
+else:
+    _single = os.getenv("GROQ_API_KEY", "")
+    GROQ_API_KEY_LIST = [_single] if _single else []
+
+# Fallback for older code that strictly requires a single key
+GROQ_API_KEY = GROQ_API_KEY_LIST[0] if GROQ_API_KEY_LIST else ""
+
 NEWS_API_KEY   = os.getenv("NEWS_API_KEY", "")
 
 # ─────────────────────────────────────────

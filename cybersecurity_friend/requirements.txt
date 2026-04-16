@@ -38,6 +38,7 @@ streamlit
 # ─── FastAPI Backend ──────────────────────────────
 fastapi                     # Production API framework
 uvicorn[standard]           # ASGI server for FastAPI
+gunicorn                    # Multi-worker process manager (production)
 
 # ─── (Optional) Load Testing ─────────────────────
 httpx                       # Async HTTP client for load_test.py

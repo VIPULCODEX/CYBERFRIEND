@@ -11,8 +11,9 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
+from news_module import fetch_cybersecurity_news, format_articles_for_llm
 from config import (
-    GROQ_API_KEY, LLM_MODEL, LLM_TEMPERATURE, TOP_K,
+    GROQ_API_KEY_LIST, LLM_MODEL, LLM_TEMPERATURE, TOP_K,
     NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS
 )
 
@@ -108,13 +109,27 @@ class CybersecurityAssistant:
     """
 
     def __init__(self, retriever, max_tokens=300):
+        import itertools
         self.retriever = retriever
-        self.llm = ChatGroq(
-            model=LLM_MODEL,
-            temperature=LLM_TEMPERATURE,
-            groq_api_key=GROQ_API_KEY,
-            max_tokens=max_tokens or LLM_MAX_TOKENS
-        )
+        
+        self.llm_pool = []
+        for key in GROQ_API_KEY_LIST:
+            self.llm_pool.append(ChatGroq(
+                model=LLM_MODEL,
+                temperature=LLM_TEMPERATURE,
+                groq_api_key=key,
+                max_tokens=max_tokens or LLM_MAX_TOKENS
+            ))
+            
+        if not self.llm_pool:
+            raise ValueError("No GROQ API keys found in the environment.")
+            
+        # Infinite round-robin iterator for load balancing
+        self.llm_cycler = itertools.cycle(self.llm_pool)
+        
+        # Keep a default reference for any standard Langchain tools that need a single LLM
+        self.llm = self.llm_pool[0]
+        
         self.output_parser = StrOutputParser()
         self._build_rag_chain()
 
@@ -153,7 +168,7 @@ class CybersecurityAssistant:
                 "question": RunnablePassthrough()
             }
             | RAG_PROMPT
-            | self.llm
+            | RunnableLambda(lambda x: next(self.llm_cycler).invoke(x))
             | self.output_parser
         )
 
@@ -182,7 +197,7 @@ class CybersecurityAssistant:
         print(f"  [+] Found {len(articles)} articles. Summarizing...")
         news_content = format_articles_for_llm(articles)
 
-        news_chain = NEWS_PROMPT | self.llm | self.output_parser
+        news_chain = NEWS_PROMPT | RunnableLambda(lambda x: next(self.llm_cycler).invoke(x)) | self.output_parser
         return news_chain.invoke({"news_content": news_content})
 
     # ──────────────────────────────────────
@@ -214,7 +229,7 @@ class CybersecurityAssistant:
                 "- [point 2]\n"
                 "- [point 3]"
             )
-            chain = general_prompt | self.llm | self.output_parser
+            chain = general_prompt | RunnableLambda(lambda x: next(self.llm_cycler).invoke(x)) | self.output_parser
             return chain.invoke({"question": query})
         except Exception as e:
             return f"[!] Error generating response: {str(e)}"
@@ -226,7 +241,7 @@ class CybersecurityAssistant:
         """Analyze user system inputs for vulnerabilities."""
         print("  [*] Analyzing user system inputs...")
         try:
-            chain = SYSTEM_ANALYSIS_PROMPT | self.llm | self.output_parser
+            chain = SYSTEM_ANALYSIS_PROMPT | RunnableLambda(lambda x: next(self.llm_cycler).invoke(x)) | self.output_parser
             return chain.invoke({
                 "os": os_val,
                 "browser": browser_val,
