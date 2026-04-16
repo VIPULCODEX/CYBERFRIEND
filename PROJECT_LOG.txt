@@ -207,3 +207,9 @@ EOF — END OF FILE
   - Observation: some helper processes auto-respawned (expected behavior of editor runtime supervisors).
 
 - UI Cleanup: Removed sidebar metrics and manual K-selector. Automated dynamic Top-K chunk selection based on query complexity. Added local JSON persistence for chat logs across sessions.
+
+- [2026-04-16] Cloud Hosting Migration (Render -> Hugging Face Spaces):
+  - Removed render.yaml from the project due to 500MB Free Tier RAM limitations causing OOM crashes.
+  - Modified cybersecurity_friend/Dockerfile strictly for Hugging Face compatibility (non-root UID 1000, port 7860, Gunicorn workers).
+- [2026-04-16] Automated CI/CD Setup:
+  - Created .github/workflows/hf_sync.yml to fully automate future deployments on push.

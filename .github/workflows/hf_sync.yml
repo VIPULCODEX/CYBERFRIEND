@@ -1,0 +1,31 @@
+name: Sync Backend to Hugging Face
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cybersecurity_friend/**'  # This action ONLY runs when files inside this folder change
+  workflow_dispatch:  # Allows manual button click from GitHub to run the sync
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Push Backend Subfolder to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          # IMPORTANT: Change these two variables to match your HF account
+          HF_USERNAME: "Vipulcdex" 
+          SPACE_NAME: "QUANTX"
+        run: |
+          cd cybersecurity_friend
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-Deploy to Hugging Face from GitHub Actions"
+          # Push the subdirectory to the Hugging Face Space repository directly
+          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME master:main
