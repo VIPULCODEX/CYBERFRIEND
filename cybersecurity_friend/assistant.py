@@ -141,7 +141,15 @@ class CybersecurityAssistant:
 
         def retrieve_context(query: str) -> str:
             """Retrieve relevant docs and join into one context string with score hints."""
-            k = getattr(self.retriever, "search_kwargs", {}).get("k", 4)
+            # Dynamic K selection based on query complexity
+            word_count = len(query.split())
+            if word_count > 15 or any(w in query.lower() for w in ["explain", "detail", "compare", "full"]):
+                k = 5  # Complex queries need more context
+            elif word_count < 4:
+                k = 2  # Simple short questions need precise context
+            else:
+                k = 3  # Default optimal
+
             if hasattr(self.retriever, "similarity_search_with_score"):
                 docs_and_scores = self.retriever.similarity_search_with_score(query, k=k)
             elif hasattr(self.retriever, "vectorstore"):

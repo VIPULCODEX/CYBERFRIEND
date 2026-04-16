@@ -7,8 +7,27 @@ Premium Cyberpunk Dashboard — Production-Ready Interface
 import os
 import sys
 import time
+import json
 import streamlit as st
 from dotenv import load_dotenv
+
+CHAT_HISTORY_FILE = "chat_history.json"
+
+def load_chat_history():
+    if os.path.exists(CHAT_HISTORY_FILE):
+        try:
+            with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_chat_history(messages):
+    try:
+        with open(CHAT_HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(messages, f, indent=2)
+    except Exception as e:
+        print(f"Error saving chat history: {e}")
 
 # Force UTF-8 encoding on Windows to prevent codec errors
 os.environ["PYTHONIOENCODING"] = "utf-8"
@@ -1035,17 +1054,13 @@ from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
 #  SESSION STATE INIT
 # ════════════════════════════════════════════════════════════════
 if "messages" not in st.session_state:
-    st.session_state.messages = []         # chat history
+    st.session_state.messages = load_chat_history()
 if "assistant" not in st.session_state:
     st.session_state.assistant = None      # assistant object
 if "pipeline_ready" not in st.session_state:
     st.session_state.pipeline_ready = False
 if "top_k" not in st.session_state:
     st.session_state.top_k = TOP_K
-if "query_count" not in st.session_state:
-    st.session_state.query_count = 0
-if "news_count" not in st.session_state:
-    st.session_state.news_count = 0
 if "logs" not in st.session_state:
     st.session_state.logs = [
         {"msg": "Initializing tactical interface...", "type": "system", "ts": "00:00:00"},
@@ -1209,13 +1224,6 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True)
 
-    # ── STATS ──
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Queries", st.session_state.query_count)
-    with col2:
-        st.metric("News Intel", st.session_state.news_count)
-
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
     # ── SYSTEM LOGS ──
@@ -1251,20 +1259,6 @@ with st.sidebar:
     # ── SETTINGS ──
     st.markdown('<div class="sidebar-title">// SETTINGS</div>', unsafe_allow_html=True)
 
-    # Top-K slider
-    new_k = st.slider(
-        "Retrieval Depth (top-k)",
-        min_value=1, max_value=7,
-        value=st.session_state.top_k,
-        help="Number of knowledge base chunks to retrieve"
-    )
-    if new_k != st.session_state.top_k:
-        st.session_state.top_k = new_k
-        st.cache_resource.clear()
-        st.session_state.pipeline_ready = False
-        st.session_state.assistant = None
-        st.rerun()
-
     # Streaming toggle
     streaming = st.toggle("Typewriter Effect", value=True)
 
@@ -1293,8 +1287,7 @@ with st.sidebar:
 
     if st.button("⟳ CLEAR TERMINAL", use_container_width=True):
         st.session_state.messages = []
-        st.session_state.query_count = 0
-        st.session_state.news_count = 0
+        save_chat_history([])
         add_log("Terminal cleared by operator.", "system")
         st.rerun()
 
@@ -1398,7 +1391,6 @@ with tab1:
 
     if user_input:
         assistant = st.session_state.assistant
-        st.session_state.query_count += 1
 
         # Threat level logic (random fluctuation + increase on specific keywords)
         import random
@@ -1440,10 +1432,7 @@ with tab1:
             "content": response,
             "type": msg_type
         })
-
-        # Update counters
-        if is_news:
-            st.session_state.news_count += 1
+        save_chat_history(st.session_state.messages)
 
         # Render response with optional streaming
         if streaming:
