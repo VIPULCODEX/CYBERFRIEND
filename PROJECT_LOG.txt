@@ -192,3 +192,18 @@ EOF — END OF FILE
   - Added `get_index_status()` in `cybersecurity_friend/rag_pipeline.py` for index diagnostics.
   - Added `GET /api/rag/status` in `cybersecurity_friend/api.py` to inspect loaded/on-disk index state (static/warm/hot).
   - Updated CLI rebuild flow in `cybersecurity_friend/main.py` to rebuild hybrid indices (`build_all_indexes`) instead of only static index.
+- [2026-04-16] Git Sync:
+  - Committed and pushed latest rollback + RAG diagnostics updates to GitHub:
+    - Commit: `b7c4388`
+    - Branch: `main`
+    - Remote: `origin/main`
+  - Purpose: ensure Streamlit deployment can pick latest repository state.
+- [2026-04-16] Local Process Cleanup (Antigravity):
+  - Investigated active antigravity-related background processes via `Win32_Process`.
+  - Per user request, terminated likely non-essential helper backends:
+    - `language_server_windows_x64.exe` (multiple instances)
+    - `pyrefly.exe`
+    - extra antigravity-linked `powershell.exe` (`-noexit` session)
+  - Observation: some helper processes auto-respawned (expected behavior of editor runtime supervisors).
+
+- UI Cleanup: Removed sidebar metrics and manual K-selector. Automated dynamic Top-K chunk selection based on query complexity. Added local JSON persistence for chat logs across sessions.
