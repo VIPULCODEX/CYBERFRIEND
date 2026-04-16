@@ -3,6 +3,7 @@ services:
   - type: web
     name: quantx-api
     env: python
+    rootDir: cybersecurity_friend
     buildCommand: pip install -r requirements.txt
     # 4 uvicorn workers sharing the same event loop.
     # Each worker handles up to MAX_CONCURRENT_LLM_CALLS=10 Groq calls.
@@ -34,6 +35,7 @@ services:
   - type: web
     name: quantx-ui
     env: python
+    rootDir: cybersecurity_friend
     buildCommand: pip install -r requirements.txt
     startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
     envVars:
