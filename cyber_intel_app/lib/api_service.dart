@@ -115,10 +115,4 @@ class ApiService with ChangeNotifier {
       _threatLevel = (_threatLevel + 2).clamp(0, 95);
     }
   }
-
-  void clearChat() {
-    _messages.clear();
-    _queryCount = 0;
-    notifyListeners();
-  }
 }
