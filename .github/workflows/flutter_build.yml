@@ -35,6 +35,7 @@ jobs:
         run: |
           rm -rf android
           flutter create . --platforms android
+          sed -i 's/android:label="cyber_intel_app"/android:label="QuantX"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Build APK
         working-directory: ./cyber_intel_app
