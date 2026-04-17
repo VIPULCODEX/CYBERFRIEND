@@ -47,20 +47,149 @@ class QuantXApp extends StatelessWidget {
   }
 }
 
-// Placeholder for ChatScreen — will implement in next file
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _controller = TextEditingController();
+
+  void _sendMessage(BuildContext context) {
+    if (_controller.text.trim().isEmpty) return;
+    
+    final api = Provider.of<ApiService>(context, listen: false);
+    api.sendMessage(_controller.text.trim());
+    _controller.clear();
+    
+    // Unfocus the keyboard
+    FocusScope.of(context).unfocus();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('🛡 QUANTX AI', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 18)),
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF0B0F14).withOpacity(0.9),
         elevation: 0,
         centerTitle: true,
       ),
-      body: const Center(child: Text('Initializing tactical interface...')),
+      body: Consumer<ApiService>(
+        builder: (context, apiService, _) {
+          return Column(
+            children: [
+              Expanded(
+                child: apiService.messages.isEmpty
+                    ? Center(
+                        child: Text(
+                          'Tactical Interface Ready\nAwaiting Command...',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF4CAF50).withOpacity(0.6),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        reverse: false, // In a real app we might want to reverse or auto-scroll
+                        itemCount: apiService.messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = apiService.messages[index];
+                          final isUser = msg.role == 'user';
+                          
+                          Color borderColor = isUser ? const Color(0xFF4CAF50) : const Color(0xFFFFC857);
+                          if (msg.type == 'alert') borderColor = Colors.redAccent;
+                          
+                          return Align(
+                            alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(12),
+                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF161F28),
+                                border: Border(
+                                  left: BorderSide(color: borderColor, width: isUser ? 0 : 3),
+                                  right: BorderSide(color: borderColor, width: isUser ? 3 : 0),
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                msg.content,
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              
+              if (apiService.isLoading)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: LinearProgressIndicator(
+                    backgroundColor: Color(0xFF161F28),
+                    color: Color(0xFFFFC857),
+                    minHeight: 2,
+                  ),
+                ),
+                
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                color: const Color(0xFF161F28),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Enter command parameters...',
+                          hintStyle: TextStyle(color: Colors.grey.shade600),
+                          filled: true,
+                          fillColor: const Color(0xFF0B0F14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: BorderSide(color: Colors.grey.shade800),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(4),
+                            borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        ),
+                        onSubmitted: (_) => _sendMessage(context),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4CAF50),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.send_rounded, color: Colors.black),
+                        onPressed: () => _sendMessage(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
