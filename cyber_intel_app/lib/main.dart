@@ -101,15 +101,20 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                 ),
-                SwitchListTile(
-                  title: const Text('Use Cyber Knowledge Base (RAG)', style: TextStyle(color: Colors.white, fontSize: 13)),
-                  subtitle: const Text('Bypass for faster casual chats', style: TextStyle(color: Colors.white54, fontSize: 11)),
-                  activeColor: const Color(0xFF4CAF50),
-                  value: apiService.useRag,
-                  onChanged: (val) {
-                    apiService.toggleRag(val);
+                const ListTile(
+                  leading: Icon(Icons.psychology, color: Color(0xFF4CAF50)),
+                  title: Text('Smart Intelligence: ACTIVE', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  subtitle: Text('Auto-switching RAG & LLM', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.history, color: Color(0xFFFFC857)),
+                  title: const Text('Mission Log History', style: TextStyle(color: Colors.white)),
+                  subtitle: const Text('Local Persistence: Enabled', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Chat history is automatically saved to local storage.')),
+                    );
                   },
-                  secondary: const Icon(Icons.memory, color: Color(0xFFFFC857)),
                 ),
                 ListTile(
                   leading: const Icon(Icons.delete_sweep, color: Color(0xFFFF5252)),

@@ -284,7 +284,12 @@ class CybersecurityAssistant:
             use_rag = False
 
         if use_rag:
-            return self.get_rag_response(query)
+            rag_res = self.get_rag_response(query)
+            # Automatic fallback if RAG didn't find specific info
+            if "I don't have enough information" in rag_res:
+                print("  [*] RAG context insufficient. Falling back to direct LLM.")
+                return self.get_llm_response(query)
+            return rag_res
         else:
             return self.get_llm_response(query)
 

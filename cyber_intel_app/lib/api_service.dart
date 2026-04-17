@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiMessage {
   final String role;
@@ -8,31 +9,39 @@ class ApiMessage {
   final String type; // 'user', 'rag', 'news', 'alert'
 
   ApiMessage({required this.role, required this.content, this.type = 'rag'});
+
+  Map<String, dynamic> toJson() => {
+    'role': role,
+    'content': content,
+    'type': type,
+  };
+
+  factory ApiMessage.fromJson(Map<String, dynamic> json) => ApiMessage(
+    role: json['role'],
+    content: json['content'],
+    type: json['type'],
+  );
 }
 
 class ApiService with ChangeNotifier {
-  // Update this URL once you deploy to Render/Railway
-  String _baseUrl = "https://vipulcdex-quantx.hf.space"; // Connected to Live Hugging Face 16GB Backend
+  String _baseUrl = "https://vipulcdex-quantx.hf.space";
   
   final List<ApiMessage> _messages = [];
   bool _isLoading = false;
   int _queryCount = 0;
   double _threatLevel = 15.0;
-  bool _useRag = true;
+
+  ApiService() {
+    _loadHistory();
+  }
 
   List<ApiMessage> get messages => _messages;
   bool get isLoading => _isLoading;
   int get queryCount => _queryCount;
   double get threatLevel => _threatLevel;
-  bool get useRag => _useRag;
 
   void setBaseUrl(String url) {
     _baseUrl = url;
-    notifyListeners();
-  }
-
-  void toggleRag(bool value) {
-    _useRag = value;
     notifyListeners();
   }
 
@@ -50,8 +59,8 @@ class ApiService with ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'query': query,
-          'user_id': 'mobile_user_1', // Can be dynamic
-          'use_rag': _useRag,
+          'user_id': 'mobile_user_1',
+          'use_rag': true, // Always default to smart RAG with server fallback
         }),
       ).timeout(const Duration(seconds: 30));
 
@@ -84,6 +93,24 @@ class ApiService with ChangeNotifier {
       ));
     } finally {
       _isLoading = false;
+      _saveHistory();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encodedData = jsonEncode(_messages.map((m) => m.toJson()).toList());
+    await prefs.setString('chat_history', encodedData);
+  }
+
+  Future<void> _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? historyString = prefs.getString('chat_history');
+    if (historyString != null) {
+      final List<dynamic> decodedData = jsonDecode(historyString);
+      _messages.clear();
+      _messages.addAll(decodedData.map((m) => ApiMessage.fromJson(m)).toList());
       notifyListeners();
     }
   }
@@ -92,6 +119,7 @@ class ApiService with ChangeNotifier {
     _messages.clear();
     _queryCount = 0;
     _threatLevel = 15.0;
+    _saveHistory();
     notifyListeners();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Tactical Interface Reset')),
