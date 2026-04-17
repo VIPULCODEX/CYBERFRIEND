@@ -76,6 +76,54 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: const Color(0xFF0B0F14).withOpacity(0.9),
         elevation: 0,
         centerTitle: true,
+        // The hamburger icon will automatically appear when we add a Drawer!
+      ),
+      drawer: Drawer(
+        backgroundColor: const Color(0xFF0B0F14),
+        child: Column(
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Color(0xFF4CAF50), width: 2)),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('SYSTEM STATUS', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70)),
+                    const SizedBox(height: 8),
+                    Text('ONLINE', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: const Color(0xFF4CAF50))),
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.security, color: Color(0xFFFFC857)),
+              title: const Text('Threat Intelligence: Active', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.memory, color: Color(0xFFFFC857)),
+              title: const Text('Core Model: QuantX-V3', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pop(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.cloud_done, color: Color(0xFFFFC857)),
+              title: const Text('Cloud: Hugging Face 16GB', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pop(context),
+            ),
+            const Spacer(),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'v1.0.0 — SECURE CONNECTION',
+                style: TextStyle(color: Colors.white38, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Consumer<ApiService>(
         builder: (context, apiService, _) {
