@@ -18,14 +18,21 @@ class ApiService with ChangeNotifier {
   bool _isLoading = false;
   int _queryCount = 0;
   double _threatLevel = 15.0;
+  bool _useRag = true;
 
   List<ApiMessage> get messages => _messages;
   bool get isLoading => _isLoading;
   int get queryCount => _queryCount;
   double get threatLevel => _threatLevel;
+  bool get useRag => _useRag;
 
   void setBaseUrl(String url) {
     _baseUrl = url;
+    notifyListeners();
+  }
+
+  void toggleRag(bool value) {
+    _useRag = value;
     notifyListeners();
   }
 
@@ -44,6 +51,7 @@ class ApiService with ChangeNotifier {
         body: jsonEncode({
           'query': query,
           'user_id': 'mobile_user_1', // Can be dynamic
+          'use_rag': _useRag,
         }),
       ).timeout(const Duration(seconds: 30));
 
@@ -78,6 +86,16 @@ class ApiService with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void clearChat(BuildContext context) {
+    _messages.clear();
+    _queryCount = 0;
+    _threatLevel = 15.0;
+    notifyListeners();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Tactical Interface Reset')),
+    );
   }
 
   String _detectMessageType(String query, String response) {

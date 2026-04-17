@@ -188,6 +188,14 @@ class CybersecurityAssistant:
         query_lower = query.lower()
         return any(word in query_lower for word in NEWS_TRIGGER_WORDS)
 
+    def is_general_chatter(self, query: str) -> bool:
+        """Detect greeting or generic conversation."""
+        query_lower = query.lower().strip()
+        chatter_keywords = ["hi", "hello", "hey", "how are you", "who are you", "what are you", "thanks", "thank you", "bye"]
+        if len(query_lower.split()) <= 4 and any(query_lower.startswith(w) or query_lower == w for w in chatter_keywords):
+            return True
+        return False
+
     # ──────────────────────────────────────
     # News Response
     # ──────────────────────────────────────
@@ -227,15 +235,10 @@ class CybersecurityAssistant:
         print("  [*] Answering directly via LLM...")
         try:
             general_prompt = ChatPromptTemplate.from_template(
-                "You are a cybersecurity assistant. "
-                "Respond in strict format only.\n\n"
-                "User Question: {question}\n\n"
-                "Format:\n"
-                "Answer: [2-5 concise lines]\n"
-                "Key Points:\n"
-                "- [point 1]\n"
-                "- [point 2]\n"
-                "- [point 3]"
+                "You are QuantX, a cybersecurity assistant. "
+                "Respond naturally to the user. If it is technical, format it appropriately.\n\n"
+                "User Request: {question}\n\n"
+                "Response:"
             )
             chain = general_prompt | RunnableLambda(lambda x: next(self.llm_cycler).invoke(x)) | self.output_parser
             return chain.invoke({"question": query})
@@ -266,6 +269,7 @@ class CybersecurityAssistant:
         """
         Route query to appropriate handler:
         - News keywords → NewsAPI + LLM summary
+        - General chatter → direct LLM (bypassing RAG)
         - Everything else → RAG pipeline or direct LLM
         """
         query = query.strip()
@@ -274,9 +278,13 @@ class CybersecurityAssistant:
 
         if self.is_news_query(query):
             return self.get_news_response()
+            
+        if self.is_general_chatter(query):
+            print("  [*] Auto-detected general chatter. Bypassing RAG.")
+            use_rag = False
+
+        if use_rag:
+            return self.get_rag_response(query)
         else:
-            if use_rag:
-                return self.get_rag_response(query)
-            else:
-                return self.get_llm_response(query)
+            return self.get_llm_response(query)
 

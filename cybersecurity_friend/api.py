@@ -131,6 +131,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     query: str
     user_id: Optional[str] = None
+    use_rag: Optional[bool] = True
 
 
 class ChatResponse(BaseModel):
@@ -173,7 +174,9 @@ async def handle_chat(request: ChatRequest, client_request: Request):
     clean_query = validate_query(request.query)
 
     # 3. Cache fast-path (no semaphore needed)
-    cached_res = await cache_manager.aget(clean_query)
+    # We include `use_rag` toggle in the cache key to prevent mismatched caching
+    cache_key = f"{clean_query}__rag={request.use_rag}"
+    cached_res = await cache_manager.aget(cache_key)
     if cached_res:
         _metrics["cache_hits"] += 1
         logger.info("Cache HIT")
@@ -207,10 +210,9 @@ async def handle_chat(request: ChatRequest, client_request: Request):
         # Run the synchronous LLM call in a thread so the event loop stays free
         result = await asyncio.get_event_loop().run_in_executor(
             None,
-            assistant_instance.respond,
-            clean_query,
+            lambda: assistant_instance.respond(clean_query, use_rag=request.use_rag)
         )
-        await cache_manager.aset(clean_query, result)
+        await cache_manager.aset(cache_key, result)
         time_taken = time.perf_counter() - start_time
         logger.info("LLM response in %.2fs (queued=%s)", time_taken, queued)
         return ChatResponse(

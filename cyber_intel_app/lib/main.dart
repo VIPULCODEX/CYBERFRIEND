@@ -80,49 +80,66 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       drawer: Drawer(
         backgroundColor: const Color(0xFF0B0F14),
-        child: Column(
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xFF4CAF50), width: 2)),
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('SYSTEM STATUS', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70)),
-                    const SizedBox(height: 8),
-                    Text('ONLINE', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: const Color(0xFF4CAF50))),
-                  ],
+        child: Consumer<ApiService>(
+          builder: (context, apiService, _) {
+            return Column(
+              children: [
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Color(0xFF4CAF50), width: 2)),
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('SYSTEM STATUS', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70)),
+                        const SizedBox(height: 8),
+                        Text('ONLINE', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: const Color(0xFF4CAF50))),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.security, color: Color(0xFFFFC857)),
-              title: const Text('Threat Intelligence: Active', style: TextStyle(color: Colors.white)),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.memory, color: Color(0xFFFFC857)),
-              title: const Text('Core Model: QuantX-V3', style: TextStyle(color: Colors.white)),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.cloud_done, color: Color(0xFFFFC857)),
-              title: const Text('Cloud: Hugging Face 16GB', style: TextStyle(color: Colors.white)),
-              onTap: () => Navigator.pop(context),
-            ),
-            const Spacer(),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'v1.0.0 — SECURE CONNECTION',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
-              ),
-            ),
-          ],
+                SwitchListTile(
+                  title: const Text('Use Cyber Knowledge Base (RAG)', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  subtitle: const Text('Bypass for faster casual chats', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                  activeColor: const Color(0xFF4CAF50),
+                  value: apiService.useRag,
+                  onChanged: (val) {
+                    apiService.toggleRag(val);
+                  },
+                  secondary: const Icon(Icons.memory, color: Color(0xFFFFC857)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.delete_sweep, color: Color(0xFFFF5252)),
+                  title: const Text('Clear Tactical Interface', style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    apiService.clearChat(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.security, color: Color(0xFF4CAF50)),
+                  title: Text('Threat Level: ${apiService.threatLevel.toStringAsFixed(1)}%', style: const TextStyle(color: Colors.white)),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.cloud_done, color: Color(0xFF2196F3)),
+                  title: const Text('Cloud: HF 16GB Deployed', style: TextStyle(color: Colors.white)),
+                  onTap: () {},
+                ),
+                const Spacer(),
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'v1.1.0 — OPTIMIZED ROUTING',
+                    style: TextStyle(color: Colors.white38, fontSize: 12),
+                  ),
+                ),
+              ],
+            );
+          }
         ),
       ),
       body: Consumer<ApiService>(
