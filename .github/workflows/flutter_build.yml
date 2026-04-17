@@ -30,6 +30,12 @@ jobs:
         working-directory: ./cyber_intel_app
         run: flutter pub get
 
+      - name: Recreate Android Project
+        working-directory: ./cyber_intel_app
+        run: |
+          rm -rf android
+          flutter create . --platforms android
+
       - name: Build APK
         working-directory: ./cyber_intel_app
         run: flutter build apk --release
