@@ -245,3 +245,15 @@ EOF — END OF FILE
 
 - [2026-04-20] GitHub Sync:
   - Successfully committed and pushed all multi-session and logical scope updates to branch `main`.
+
+- [2026-04-20] Security Layer Enhancement:
+  - Developed `sanitize_input()` in `security.py` to neutralize XSS, SQLi, and malicious HTML patterns.
+  - Implemented strict input validation in `CybersecurityAssistant.respond`.
+  - Added real-time Security Audit tab with session monitoring and threat score tracking.
+  - Increased Rate Limiter capacity to 8 req/min for improved power-user experience.
+
+- [2026-04-20] Sidebar UI Fix & Terminal History:
+  - Fixed sidebar history visibility issue by wrapping entries in `history-card` CSS containers.
+  - Added session metadata (message counts and session IDs) to history items.
+  - Implemented "Active Session" permanent highlighting for better navigation.
+  - Added "EXPORT TERMINAL LOG (JSON)" feature for session persistence.
