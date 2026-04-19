@@ -21,8 +21,8 @@ from config import (
 # PROMPT TEMPLATES
 # ─────────────────────────────────────────────────────
 
-RAG_PROMPT = ChatPromptTemplate.from_template("""You are a cybersecurity assistant.
-Use ONLY the following context from the knowledge base to answer the user's question.
+RAG_PROMPT = ChatPromptTemplate.from_template("""You are QuantX, an advanced AI assistant specializing in cybersecurity.
+Use the following context from your knowledge base to answer the user's question.
 
 Context:
 {context}
@@ -30,18 +30,18 @@ Context:
 User Question: {question}
 
 Instructions:
-- If the user is DESCRIBING A SCENARIO (e.g., "I clicked a link", "I got a weird email", "my computer is acting strange"):
+- If the context contains relevant information, use it to provide a structured and detailed response.
+- If the user is DESCRIBING A SCENARIO:
   Respond in EXACTLY this format:
-
   Attack Type: [identify the most likely attack]
   Explanation: [explain it clearly in simple language]
   What to Do:
   - [step 1]
   - [step 2]
   - [step 3]
-  Confidence: [High / Medium / Low – based on context match] (L2 Distance: [Include the L2 Distance of the most relevant chunk used])
+  Confidence: [High / Medium / Low] (L2 Distance: [Include score])
 
-- If it is a GENERAL CYBERSECURITY QUESTION (e.g., "What is phishing?", "How does ransomware work?"):
+- If it is a GENERAL TECHNICAL QUESTION:
   Respond in EXACTLY this format:
   Answer: [2-5 concise lines]
   Key Points:
@@ -49,13 +49,12 @@ Instructions:
   - [point 2]
   - [point 3]
 
-- If the answer is NOT in the context, respond with:
-  "I don't have enough information on this in my knowledge base. Please consult a security professional."
+- If the answer is NOT in the context, respond EXACTLY with:
+  "I don't have enough specific information on this in my local knowledge matrix. Initializing general reasoning fallback..."
 
 IMPORTANT:
-- Never guess or make up facts.
-- Keep response strict and concise.
-- Do not add extra sections beyond the required format.
+- Keep responses professional and concise.
+- Use only the provided context if possible.
 """)
 
 NEWS_PROMPT = ChatPromptTemplate.from_template("""You are a cybersecurity news analyst.
@@ -235,8 +234,9 @@ class CybersecurityAssistant:
         print("  [*] Answering directly via LLM...")
         try:
             general_prompt = ChatPromptTemplate.from_template(
-                "You are QuantX, a cybersecurity assistant. "
-                "Respond naturally to the user. If it is technical, format it appropriately.\n\n"
+                "You are QuantX, a highly capable AI assistant. "
+                "While you specialize in cybersecurity and threat intelligence, you are fully equipped to handle any general query or task. "
+                "Provide a helpful, accurate, and professional response to the user's request.\n\n"
                 "User Request: {question}\n\n"
                 "Response:"
             )
@@ -286,7 +286,7 @@ class CybersecurityAssistant:
         if use_rag:
             rag_res = self.get_rag_response(query)
             # Automatic fallback if RAG didn't find specific info
-            if "I don't have enough information" in rag_res:
+            if "Initializing general reasoning fallback" in rag_res:
                 print("  [*] RAG context insufficient. Falling back to direct LLM.")
                 return self.get_llm_response(query)
             return rag_res

@@ -14,18 +14,31 @@ from dotenv import load_dotenv
 CHAT_HISTORY_FILE = "chat_history.json"
 
 def load_chat_history():
+    """Load all conversations from file."""
     if os.path.exists(CHAT_HISTORY_FILE):
         try:
             with open(CHAT_HISTORY_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-    return []
+                data = json.load(f)
+                # Migration: if data is a list, convert to new dict format
+                if isinstance(data, list):
+                    return {
+                        "legacy_chat": {
+                            "title": "Legacy Conversation",
+                            "messages": data,
+                            "timestamp": time.time()
+                        }
+                    }
+                return data
+        except Exception as e:
+            print(f"Error loading chat history: {e}")
+            return {}
+    return {}
 
-def save_chat_history(messages):
+def save_chat_history(chats):
+    """Save all conversations to file."""
     try:
         with open(CHAT_HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(messages, f, indent=2)
+            json.dump(chats, f, indent=2)
     except Exception as e:
         print(f"Error saving chat history: {e}")
 
@@ -1036,6 +1049,81 @@ header button span {
     color: var(--primary) !important;
     font-family: 'Orbitron', monospace !important;
 }
+/* ══════════════════════════════════════════════════════════════
+   CHAT HISTORY LIST — Sidebar
+   ══════════════════════════════════════════════════════════════ */
+.history-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-bottom: var(--space-lg);
+}
+.history-item {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    transition: all var(--transition-fast);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.history-item:hover {
+    background: rgba(255, 200, 87, 0.06);
+    border-color: rgba(255, 200, 87, 0.15);
+}
+.history-item.active {
+    background: rgba(255, 200, 87, 0.1);
+    border-color: var(--primary);
+    box-shadow: inset 0 0 10px rgba(255, 200, 87, 0.05);
+}
+.history-title {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 85%;
+}
+.history-item.active .history-title {
+    color: var(--primary);
+    font-weight: 500;
+}
+.history-delete {
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: var(--alert);
+    font-size: 0.8rem;
+}
+.history-item:hover .history-delete {
+    opacity: 0.6;
+}
+.history-delete:hover {
+    opacity: 1 !important;
+    transform: scale(1.2);
+}
+
+.new-chat-btn {
+    background: linear-gradient(90deg, var(--primary-dim), transparent) !important;
+    border: 1px dashed var(--primary) !important;
+    color: var(--primary) !important;
+    font-family: 'Orbitron', monospace !important;
+    letter-spacing: 2px !important;
+    padding: 12px !important;
+    margin-bottom: var(--space-md) !important;
+    width: 100%;
+    border-radius: var(--radius-md) !important;
+}
+.new-chat-btn:hover {
+    background: var(--primary) !important;
+    color: var(--bg-deep) !important;
+    box-shadow: 0 0 20px var(--primary-glow) !important;
+}
+
 </style>
 
 <!-- Background overlays -->
@@ -1053,8 +1141,22 @@ from config import GROQ_API_KEY, NEWS_API_KEY, TOP_K
 # ════════════════════════════════════════════════════════════════
 #  SESSION STATE INIT
 # ════════════════════════════════════════════════════════════════
-if "messages" not in st.session_state:
-    st.session_state.messages = load_chat_history()
+if "chats" not in st.session_state:
+    st.session_state.chats = load_chat_history()
+    
+# Initialize first chat if version 0
+if not st.session_state.chats:
+    chat_id = str(int(time.time()))
+    st.session_state.chats[chat_id] = {
+        "title": "New Session",
+        "messages": [],
+        "timestamp": time.time()
+    }
+    st.session_state.current_chat_id = chat_id
+elif "current_chat_id" not in st.session_state:
+    # Set current to most recent
+    st.session_state.current_chat_id = sorted(st.session_state.chats.keys(), key=lambda x: st.session_state.chats[x].get('timestamp', 0), reverse=True)[0]
+
 if "assistant" not in st.session_state:
     st.session_state.assistant = None      # assistant object
 if "pipeline_ready" not in st.session_state:
@@ -1285,10 +1387,58 @@ with st.sidebar:
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
-    if st.button("⟳ CLEAR TERMINAL", use_container_width=True):
-        st.session_state.messages = []
-        save_chat_history([])
-        add_log("Terminal cleared by operator.", "system")
+    # ── CHAT HISTORY (ChatGPT style) ──
+    st.markdown('<div class="sidebar-title">// TERMINAL HISTORY</div>', unsafe_allow_html=True)
+    
+    if st.button("+ NEW TERMINAL", key="new_chat_btn", use_container_width=True):
+        new_id = str(int(time.time()))
+        st.session_state.chats[new_id] = {
+            "title": "Unidentified Query",
+            "messages": [],
+            "timestamp": time.time()
+        }
+        st.session_state.current_chat_id = new_id
+        save_chat_history(st.session_state.chats)
+        add_log("New encrypted session initialized.", "system")
+        st.rerun()
+
+    st.markdown('<div class="history-container">', unsafe_allow_html=True)
+    # Sort chats by timestamp descending
+    sorted_chat_ids = sorted(st.session_state.chats.keys(), key=lambda x: st.session_state.chats[x].get('timestamp', 0), reverse=True)
+    
+    for cid in sorted_chat_ids:
+        chat_data = st.session_state.chats[cid]
+        active_class = "active" if cid == st.session_state.current_chat_id else ""
+        
+        col1, col2 = st.columns([0.85, 0.15])
+        with col1:
+            if st.button(chat_data["title"], key=f"chat_{cid}", use_container_width=True):
+                st.session_state.current_chat_id = cid
+                st.rerun()
+        with col2:
+            if st.button("×", key=f"del_{cid}", help="Delete Session"):
+                del st.session_state.chats[cid]
+                # If we deleted the current chat, switch to another or create new
+                if cid == st.session_state.current_chat_id:
+                    if st.session_state.chats:
+                        st.session_state.current_chat_id = list(st.session_state.chats.keys())[0]
+                    else:
+                        new_id = str(int(time.time()))
+                        st.session_state.chats[new_id] = {"title": "New Session", "messages": [], "timestamp": time.time()}
+                        st.session_state.current_chat_id = new_id
+                save_chat_history(st.session_state.chats)
+                st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    if st.button("🗑 PURGE ALL HISTORY", use_container_width=True):
+        st.session_state.chats = {}
+        new_id = str(int(time.time()))
+        st.session_state.chats[new_id] = {"title": "New Session", "messages": [], "timestamp": time.time()}
+        st.session_state.current_chat_id = new_id
+        save_chat_history(st.session_state.chats)
+        add_log("Memory purged by operator.", "system")
         st.rerun()
 
 
@@ -1361,23 +1511,26 @@ tab1, tab2 = st.tabs(["💬 CHAT & INTEL", "🔍 SYSTEM ANALYSIS"])
 
 with tab1:
     # ── Chat History ──
-    if not st.session_state.messages:
+    current_chat = st.session_state.chats[st.session_state.current_chat_id]
+    messages = current_chat["messages"]
+
+    if not messages:
         st.markdown("""
         <div class="welcome-card">
             <div class="welcome-title">SYSTEM READY — AWAITING OPERATOR INPUT</div>
-            <div>Welcome, operator. I am your cybersecurity intelligence assistant.</div>
+            <div>Welcome, operator. I am QuantX, your AI intelligence advisor.</div>
             <br>
-            <div class="capability">Explain any cybersecurity attack or concept</div>
-            <div class="capability">Identify attack types from your scenario descriptions</div>
-            <div class="capability">Suggest immediate protective actions</div>
-            <div class="capability">Fetch real-time cybersecurity news & incidents</div>
+            <div class="capability">Explain any concept or solve complex tasks</div>
+            <div class="capability">Specialized cybersecurity & threat analysis</div>
+            <div class="capability">Real-time intel & incident reporting</div>
+            <div class="capability">System vulnerability assessment</div>
             <br>
             <div class="hint">Type your query below or select from the sidebar →</div>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-        for msg in st.session_state.messages:
+        for msg in messages:
             render_message(msg["role"], msg["content"], msg.get("type", "rag"))
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1387,52 +1540,63 @@ with tab1:
     if "pending_query" in st.session_state:
         user_input = st.session_state.pop("pending_query")
     else:
-        user_input = st.chat_input("Enter query — describe a scenario, ask a question, or request news...")
+        user_input = st.chat_input("Enter query — I can help with security or any general task...")
 
     if user_input:
         assistant = st.session_state.assistant
 
-        # Threat level logic (random fluctuation + increase on specific keywords)
+        # Threat level logic
         import random
         st.session_state.threat_level = min(95, max(10, st.session_state.threat_level + random.randint(-5, 8)))
         if any(w in user_input.lower() for w in ["hack", "attack", "breach", "malware", "ransomware"]):
             st.session_state.threat_level = min(100, st.session_state.threat_level + 15)
-            add_log(f"Suspicious pattern detected in query.", "warn")
+            add_log(f"Suspicious pattern detected.", "warn")
         else:
-            add_log(f"Processing operator query...", "info")
-
+            add_log(f"Processing query...", "info")
+        
         # Store user message
-        st.session_state.messages.append({"role": "user", "content": user_input, "type": "user"})
-        render_message("user", user_input)
+        messages.append({"role": "user", "content": user_input, "type": "user"})
+        
+        # Update title if it's the first message
+        if len(messages) == 1 or current_chat["title"] == "Unidentified Query":
+            title = user_input[:30] + ("..." if len(user_input) > 30 else "")
+            current_chat["title"] = title
+        
+        current_chat["timestamp"] = time.time()
+        save_chat_history(st.session_state.chats)
+        
+        # Rerender to show user message immediately
+        st.rerun()
 
-        # Determine type
-        news_words = ["today", "recent", "latest", "news", "incident", "breach", "happened", "current"]
-        is_news = any(w in user_input.lower() for w in news_words)
-
+    # Handle assistant response if the last message is from user
+    if messages and messages[-1]["role"] == "user":
+        assistant = st.session_state.assistant
+        last_query = messages[-1]["content"]
+        
         # Show cyber loader
         loader_slot = st.empty()
-        loader_msg = "SCANNING KNOWLEDGE MATRIX" if use_rag else "PROCESSING VIA LLM"
+        loader_msg = "SCANNING KNOWLEDGE MATRIX" if use_rag else "INVOKING NEURAL CORE"
         loader_slot.markdown(render_cyber_loader(loader_msg), unsafe_allow_html=True)
 
         try:
-            response = assistant.respond(user_input, use_rag=use_rag)
-            add_log("Response generated successfully.", "info")
+            response = assistant.respond(last_query, use_rag=use_rag)
+            add_log("Intelligence retrieved.", "info")
         except Exception as e:
-            response = f"[ERROR] Query failed: {str(e)}\n\nIf this is a quota error, please wait or use a new API key."
-            add_log(f"Error generating response.", "error")
+            response = f"[ERROR] Secure link failed: {str(e)}"
+            add_log(f"Query error.", "error")
 
         loader_slot.empty()
 
         # Determine message type for display
-        msg_type = detect_message_type(user_input, response)
+        msg_type = detect_message_type(last_query, response)
 
         # Store assistant message
-        st.session_state.messages.append({
+        messages.append({
             "role": "assistant",
             "content": response,
             "type": msg_type
         })
-        save_chat_history(st.session_state.messages)
+        save_chat_history(st.session_state.chats)
 
         # Render response with optional streaming
         if streaming:
@@ -1440,7 +1604,6 @@ with tab1:
             stream_text(response, placeholder, delay=0.005)
             placeholder.empty()
 
-        render_message("assistant", response, msg_type)
         st.rerun()
 
 
