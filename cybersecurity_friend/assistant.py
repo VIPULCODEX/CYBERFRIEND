@@ -13,9 +13,9 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
 from news_module import fetch_cybersecurity_news, format_articles_for_llm
 from config import (
-    GROQ_API_KEY_LIST, LLM_MODEL, LLM_TEMPERATURE, TOP_K,
     NEWS_TRIGGER_WORDS, LLM_MAX_TOKENS
 )
+from security import validate_query
 
 # ─────────────────────────────────────────────────────
 # PROMPT TEMPLATES
@@ -272,9 +272,13 @@ class CybersecurityAssistant:
         - General chatter → direct LLM (bypassing RAG)
         - Everything else → RAG pipeline or direct LLM
         """
-        query = query.strip()
+        try:
+            query = validate_query(query)
+        except ValueError as e:
+            return f"[SECURITY ALERT] {str(e)}"
+
         if not query:
-            return "Please type a question."
+            return "Connection established. Please provide input."
 
         if self.is_news_query(query):
             return self.get_news_response()

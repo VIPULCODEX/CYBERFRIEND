@@ -63,28 +63,53 @@ class RateLimiter:
         active = [t for t in self.requests[identifier] if now - t < self.window_seconds]
         return max(0, self.max_requests - len(active))
 
+    def get_active_sessions(self) -> int:
+        """Return count of unique identifiers currently in the rate limiter."""
+        return len(self.requests)
+
 
 # Global singleton instance
-rate_limiter = RateLimiter(max_requests=5, window_seconds=60)
+rate_limiter = RateLimiter(max_requests=8, window_seconds=60)  # Increased slightly for better interactivity
+
+
+def sanitize_input(text: str) -> str:
+    """
+    Remove potentially malicious HTML tags and scripts.
+    Returns cleaned text.
+    """
+    import re
+    # Remove <script> tags and their contents
+    text = re.sub(r'<script.*?>.*?</script>', '', text, flags=re.DOTALL | re.IGNORECASE)
+    # Remove all other HTML tags
+    text = re.sub(r'<.*?>', '', text)
+    # Remove common SQL injection keywords if they appear as standalone words
+    sql_patterns = [r'\bdrop\s+table\b', r'\bdelete\s+from\b', r'\bunion\s+select\b']
+    for pattern in sql_patterns:
+        text = re.sub(pattern, '[REDACTED]', text, flags=re.IGNORECASE)
+    return text.strip()
 
 
 def validate_query(query: str) -> str:
     """
     Normalize and validate user input:
     - Strip whitespace
-    - Normalize to lowercase for cache consistency
-    - Reject empty or very short queries (< 5 chars)
+    - Sanitize for harmful scripts/SQLi
+    - Reject empty or very short queries (< 2 chars for general chatting)
     """
     if not query:
-        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+        return ""
 
-    clean_query = query.strip().lower()
+    # Check for obvious malicious patterns before sanitizing
+    import re
+    malicious_patterns = [r'<script', r'javascript:', r'onerror=']
+    if any(re.search(p, query, re.I) for p in malicious_patterns):
+        logger.warning(f"Malicious pattern detected and blocked.")
+        raise ValueError("Security Violation: Malicious script pattern detected.")
 
-    if len(clean_query) < 5:
-        raise HTTPException(
-            status_code=400,
-            detail="Query is too short (minimum 5 characters)."
-        )
+    clean_query = sanitize_input(query)
+
+    if len(clean_query) < 2:
+        return "" # Ignore tiny inputs
 
     return clean_query
 

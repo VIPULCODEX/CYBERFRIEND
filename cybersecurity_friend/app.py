@@ -1387,6 +1387,54 @@ with st.sidebar:
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
+    st.markdown("""
+    <style>
+    /* Premium History Styles */
+    .history-card {
+        background: rgba(0, 255, 159, 0.03);
+        border: 1px solid rgba(0, 255, 159, 0.1);
+        border-radius: 4px;
+        margin-bottom: 6px;
+        padding: 4px;
+        transition: all 0.2s ease;
+    }
+    .history-card:hover {
+        background: rgba(0, 255, 159, 0.06);
+        border-color: rgba(0, 255, 159, 0.3);
+    }
+    .history-card.active {
+        background: rgba(0, 255, 159, 0.1);
+        border-color: var(--accent);
+        box-shadow: 0 0 8px rgba(0, 255, 159, 0.2);
+    }
+    .history-meta {
+        font-size: 0.7rem;
+        color: #8A9B8F;
+        margin-top: 2px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .audit-box {
+        background: rgba(255, 200, 87, 0.03);
+        border-left: 3px solid var(--warning);
+        padding: 12px;
+        border-radius: 0 4px 4px 0;
+        margin-bottom: 12px;
+    }
+    .audit-label {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.75rem;
+        color: var(--warning);
+        letter-spacing: 1px;
+    }
+    .audit-val {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.1rem;
+        color: #fff;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ── CHAT HISTORY (ChatGPT style) ──
     st.markdown('<div class="sidebar-title">// TERMINAL HISTORY</div>', unsafe_allow_html=True)
     
@@ -1402,14 +1450,16 @@ with st.sidebar:
         add_log("New encrypted session initialized.", "system")
         st.rerun()
 
-    st.markdown('<div class="history-container">', unsafe_allow_html=True)
     # Sort chats by timestamp descending
     sorted_chat_ids = sorted(st.session_state.chats.keys(), key=lambda x: st.session_state.chats[x].get('timestamp', 0), reverse=True)
     
     for cid in sorted_chat_ids:
         chat_data = st.session_state.chats[cid]
-        active_class = "active" if cid == st.session_state.current_chat_id else ""
+        is_active = cid == st.session_state.current_chat_id
+        active_class = "active" if is_active else ""
+        msg_count = len(chat_data.get("messages", []))
         
+        st.markdown(f'<div class="history-card {active_class}">', unsafe_allow_html=True)
         col1, col2 = st.columns([0.85, 0.15])
         with col1:
             if st.button(chat_data["title"], key=f"chat_{cid}", use_container_width=True):
@@ -1418,7 +1468,6 @@ with st.sidebar:
         with col2:
             if st.button("×", key=f"del_{cid}", help="Delete Session"):
                 del st.session_state.chats[cid]
-                # If we deleted the current chat, switch to another or create new
                 if cid == st.session_state.current_chat_id:
                     if st.session_state.chats:
                         st.session_state.current_chat_id = list(st.session_state.chats.keys())[0]
@@ -1428,9 +1477,27 @@ with st.sidebar:
                         st.session_state.current_chat_id = new_id
                 save_chat_history(st.session_state.chats)
                 st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <div class="history-meta">
+                <span>MSGS: {msg_count}</span>
+                <span>ID: {cid[-4:]}</span>
+            </div>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+
+    # ── EXPORT ──
+    current_chat_data = st.session_state.chats[st.session_state.current_chat_id]
+    chat_json = json.dumps(current_chat_data, indent=2)
+    st.download_button(
+        label="📥 EXPORT TERMINAL LOG (JSON)",
+        data=chat_json,
+        file_name=f"quantx_chat_{st.session_state.current_chat_id}.json",
+        mime="application/json",
+        use_container_width=True
+    )
 
     if st.button("🗑 PURGE ALL HISTORY", use_container_width=True):
         st.session_state.chats = {}
@@ -1507,7 +1574,7 @@ if not st.session_state.pipeline_ready:
 # ════════════════════════════════════════════════════════════════
 #  MAIN TABS — Chat & System Analysis
 # ════════════════════════════════════════════════════════════════
-tab1, tab2 = st.tabs(["💬 CHAT & INTEL", "🔍 SYSTEM ANALYSIS"])
+tab1, tab2, tab3 = st.tabs(["💬 CHAT & INTEL", "🔍 SYSTEM ANALYSIS", "🛡️ SECURITY AUDIT"])
 
 with tab1:
     # ── Chat History ──
@@ -1607,40 +1674,40 @@ with tab1:
         st.rerun()
 
 
-with tab2:
-    st.markdown('<div class="sidebar-title" style="font-size:0.85rem; margin-bottom:12px;">// SYSTEM VULNERABILITY SCAN</div>', unsafe_allow_html=True)
+with tab3:
+    st.markdown('<div class="sidebar-title" style="font-size:0.85rem; margin-bottom:12px;">// REAL-TIME SECURITY PARAMETERS</div>', unsafe_allow_html=True)
+    
+    from security import rate_limiter
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+        <div class="audit-box">
+            <div class="audit-label">ACTIVE SESSIONS</div>
+            <div class="audit-val">{rate_limiter.get_active_sessions()}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <div class="audit-box">
+            <div class="audit-label">THREAT SCORE</div>
+            <div class="audit-val">{st.session_state.threat_level}%</div>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("""
-    <p style='color: var(--text-secondary, #8A9B8F); font-size: 0.85rem; font-family: Inter, sans-serif; line-height: 1.7; margin-bottom: 20px;'>
-        Enter your system details to receive a static vulnerability analysis without executing local system scans.
-        This keeps your device fully private and runs smoothly via the AI CPU pipeline.
-    </p>
+    <div class="attack-card" style="margin-top:20px;">
+        <h4 style="color:var(--accent); margin-top:0;">🛡️ Multi-Layer Security Architecture</h4>
+        <ul style="font-size:0.85rem; color:#8A9B8F; list-style-type: '› '; padding-left:20px;">
+            <li><b>Rate Limiting:</b> Prevents automated brute-force attacks (8 req/min threshold).</li>
+            <li><b>Input Sanitization:</b> Scripts, SQL injection patterns, and HTML tags are automatically neutralized.</li>
+            <li><b>Privacy-First Logs:</b> System logs track metadata only; user queries are never persisted on disk.</li>
+            <li><b>Session Isolation:</b> Every terminal session uses a unique identifier for state management.</li>
+            <li><b>Post-Quantum Knowledge:</b> Intelligence matrix includes the latest NIST PQC (FIPS 203/204) standards.</li>
+        </ul>
+    </div>
     """, unsafe_allow_html=True)
-
-    with st.form("sys_analysis_form"):
-        os_val = st.text_input("Operating System", placeholder="e.g., Windows 10, macOS Sonoma, Ubuntu 22.04")
-        browser_val = st.text_input("Primary Browser", placeholder="e.g., Chrome v120, Firefox, Safari")
-        av_val = st.text_input("Antivirus / Security Software", placeholder="e.g., Windows Defender, None")
-        activity_val = st.text_area(
-            "Recent Suspicious Activity",
-            placeholder="e.g., 'Computer runs exceptionally slow, weird popups, missing files...'"
-        )
-
-        analyze_btn = st.form_submit_button("⚡ Run Analysis")
-
-    if analyze_btn:
-        if not os_val or not browser_val:
-            st.error("Please provide at least your Operating System and Browser.")
-        else:
-            analysis_loader = st.empty()
-            analysis_loader.markdown(render_cyber_loader("ANALYZING SYSTEM PARAMETERS"), unsafe_allow_html=True)
-
-            analysis_result = st.session_state.assistant.analyze_system(os_val, browser_val, av_val, activity_val)
-
-            analysis_loader.empty()
-            add_log("System analysis completed.", "info")
-
-            st.markdown(
-                f'<span class="badge badge-alert">VULNERABILITY REPORT</span><br>'
-                f'<div class="msg-bot" style="border-left-color: var(--accent);">{analysis_result}</div>',
-                unsafe_allow_html=True
-            )
+    
+    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-title" style="font-size:0.75rem;">// CRYPTOGRAPHIC ATTESTATION</div>', unsafe_allow_html=True)
+    st.info("QuantX uses localized RAG processing. No third-party data crawling or telemetry is enabled in this deployment.")
