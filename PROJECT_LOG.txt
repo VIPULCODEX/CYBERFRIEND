@@ -1,7 +1,7 @@
 🛡 QUANTX AI — PROJECT MILESTONE LOG
 =====================================
 Status: Production-Ready (Draft V1)
-Last Updated: 2026-04-15
+Last Updated: 2026-04-20
 
 This document tracks the evolution of the QuantX Cybersecurity Assistant from a basic prototype to a multi-platform production-grade service.
 
@@ -226,3 +226,22 @@ EOF — END OF FILE
   - Issue: Unable to locate package software-properties-common during Docker build.
   - Root Cause: Base image python:3.10-slim updated its Debian version, dropping the package from its default repos.
   - Fix Applied: Removed software-properties-common from Dockerfile as it is only needed for PPAs and not required for FAISS compiling.
+
+- [2026-04-20] Multi-session Chat History Interface:
+  - Implemented ChatGPT-style terminal history in the sidebar.
+  - Added support for creating, switching, and deleting multiple independent sessions.
+  - Developed automated title generation based on initial user query.
+  - Implemented migration logic to safely port legacy chat history into the new format.
+
+- [2026-04-20] General Query Support & Logical Fallback:
+  - Broadened AI scope from "Cybersecurity Only" to "Highly Capable AI Assistant".
+  - Implemented "Smart Fallback" logic: triggers general LLM reasoning when the local RAG knowledge matrix has insufficient data.
+  - Updated system prompts for professional, general-purpose assistance while maintaining threat intel expertise.
+
+- [2026-04-20] Sidebar UI Premium Overhaul:
+  - Added custom CSS for history items (hover glow, active state, ellipsis truncation).
+  - Integrated "+ NEW TERMINAL" button with dashed border aesthetic.
+  - Added "PURGE ALL" history action for operator privacy.
+
+- [2026-04-20] GitHub Sync:
+  - Successfully committed and pushed all multi-session and logical scope updates to branch `main`.
