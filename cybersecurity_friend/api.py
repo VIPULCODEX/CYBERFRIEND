@@ -97,7 +97,9 @@ async def lifespan(app: FastAPI):
         assistant_instance = CybersecurityAssistant(retriever, max_tokens=LLM_MAX_TOKENS)
         logger.info("Backend v3 ready. Semaphore slots: %d", MAX_CONCURRENT_LLM_CALLS)
     except Exception as e:
-        logger.error("Critical init error: %s", e)
+        import traceback
+        logger.error("Critical init error during lifespan startup:")
+        logger.error(traceback.format_exc())
         assistant_instance = None
 
     yield  # ← app is alive here
@@ -154,7 +156,10 @@ async def handle_chat(request: ChatRequest, client_request: Request):
       - Queue timeout (503 if waiting too long)
     """
     if assistant_instance is None:
-        raise HTTPException(status_code=503, detail="Assistant initializing. Retry in a moment.")
+        raise HTTPException(
+            status_code=503, 
+            detail="Neural Core is initializing or failed to start. Check server logs for import errors or missing config."
+        )
 
     start_time = time.perf_counter()
     _metrics["total_requests"] += 1

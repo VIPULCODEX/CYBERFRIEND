@@ -70,7 +70,15 @@ This document tracks the evolution of the QuantX Cybersecurity Assistant from a 
 
 
 =====================================
+- [2026-04-20] Cybersecurity Assistant Core Fixes:
+  - Fixed 503 Service Unavailable error by resolving a NameError in `assistant.py`. Missing imports (`LLM_MODEL`, `LLM_TEMPERATURE`, `GROQ_API_KEY_LIST`) were added to correctly initialize the `CybersecurityAssistant`.
+  - Refactored `app.py` sidebar to restore chat history visibility. Replaced raw HTML `div` card wrappers with native Streamlit containers and absolute path-based session loading (`chat_history.json`).
+  - Enhanced `api.py` lifespan with detailed traceback logging to ensure any future initialization failures are transparent and diagnosable.
+  - Verified stability via local bytecode compilation and health-check logic.
+  - Pushed all stability and UI fixes to branch `main`.
+
 EOF — END OF FILE
+
 
 --------------------------------------------------------------------------------
 8. OPERATIONAL ACTIVITY LOG (LIVE)

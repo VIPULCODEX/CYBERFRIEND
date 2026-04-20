@@ -11,7 +11,8 @@ import json
 import streamlit as st
 from dotenv import load_dotenv
 
-CHAT_HISTORY_FILE = "chat_history.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CHAT_HISTORY_FILE = os.path.join(BASE_DIR, "chat_history.json")
 
 def load_chat_history():
     """Load all conversations from file."""
@@ -1456,35 +1457,33 @@ with st.sidebar:
     for cid in sorted_chat_ids:
         chat_data = st.session_state.chats[cid]
         is_active = cid == st.session_state.current_chat_id
-        active_class = "active" if is_active else ""
         msg_count = len(chat_data.get("messages", []))
         
-        st.markdown(f'<div class="history-card {active_class}">', unsafe_allow_html=True)
-        col1, col2 = st.columns([0.85, 0.15])
-        with col1:
-            if st.button(chat_data["title"], key=f"chat_{cid}", use_container_width=True):
-                st.session_state.current_chat_id = cid
-                st.rerun()
-        with col2:
-            if st.button("×", key=f"del_{cid}", help="Delete Session"):
-                del st.session_state.chats[cid]
-                if cid == st.session_state.current_chat_id:
-                    if st.session_state.chats:
-                        st.session_state.current_chat_id = list(st.session_state.chats.keys())[0]
-                    else:
-                        new_id = str(int(time.time()))
-                        st.session_state.chats[new_id] = {"title": "New Session", "messages": [], "timestamp": time.time()}
-                        st.session_state.current_chat_id = new_id
-                save_chat_history(st.session_state.chats)
-                st.rerun()
-        
-        st.markdown(f"""
-            <div class="history-meta">
-                <span>MSGS: {msg_count}</span>
-                <span>ID: {cid[-4:]}</span>
-            </div>
-            </div>
-        """, unsafe_allow_html=True)
+        # Use a container with a border if active, or just a container
+        with st.container():
+            col1, col2 = st.columns([0.8, 0.2])
+            with col1:
+                # Custom button label that looks like a card
+                active_prefix = "▶ " if is_active else ""
+                if st.button(f"{active_prefix}{chat_data['title']}", key=f"chat_{cid}", use_container_width=True):
+                    st.session_state.current_chat_id = cid
+                    st.rerun()
+            with col2:
+                if st.button("🗑", key=f"del_{cid}", help="Delete Session"):
+                    del st.session_state.chats[cid]
+                    if cid == st.session_state.current_chat_id:
+                        if st.session_state.chats:
+                            st.session_state.current_chat_id = list(st.session_state.chats.keys())[0]
+                        else:
+                            new_id = str(int(time.time()))
+                            st.session_state.chats[new_id] = {"title": "New Session", "messages": [], "timestamp": time.time()}
+                            st.session_state.current_chat_id = new_id
+                    save_chat_history(st.session_state.chats)
+                    st.rerun()
+            
+            # Sub-labels for metadata
+            st.markdown(f'<div style="font-size: 0.65rem; color: #8A9B8F; margin-top: -10px; margin-left: 5px;">MSGS: {msg_count} | ID: {cid[-4:]}</div>', unsafe_allow_html=True)
+            st.markdown('<div style="margin-bottom: 8px;"></div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
 
