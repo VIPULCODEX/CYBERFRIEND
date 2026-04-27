@@ -71,6 +71,67 @@ class _ChatScreenState extends State<ChatScreen> {
     FocusScope.of(context).unfocus();
   }
 
+  Widget _statusCard(BuildContext context, String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F1923),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(height: 8),
+            Text(value,
+              style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold,
+                shadows: [Shadow(color: color.withOpacity(0.6), blurRadius: 8)])),
+            Text(label, style: const TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuTile(BuildContext context, {required IconData icon, required Color iconColor, required String title, required String subtitle, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F1923),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.white12),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(icon, color: iconColor, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text(subtitle, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+              ],
+            ),
+            const Spacer(),
+            const Icon(Icons.chevron_right, color: Colors.white24, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,71 +143,163 @@ class _ChatScreenState extends State<ChatScreen> {
         // The hamburger icon will automatically appear when we add a Drawer!
       ),
       drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.85,
         backgroundColor: const Color(0xFF0B0F14),
         child: Consumer<ApiService>(
           builder: (context, apiService, _) {
             return Column(
               children: [
-                DrawerHeader(
+                // Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 56, 20, 20),
                   decoration: const BoxDecoration(
+                    color: Color(0xFF0F1923),
                     border: Border(bottom: BorderSide(color: Color(0xFF4CAF50), width: 2)),
                   ),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('SYSTEM STATUS', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70)),
-                        const SizedBox(height: 8),
-                        Text('ONLINE', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24, color: const Color(0xFF4CAF50))),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFF4CAF50), width: 1.5),
+                              borderRadius: BorderRadius.circular(8),
+                              color: const Color(0xFF4CAF50).withOpacity(0.1),
+                            ),
+                            child: const Icon(Icons.shield, color: Color(0xFF4CAF50), size: 22),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('QUANTX AI',
+                                style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 16)),
+                              const Text('Cybersecurity Intelligence',
+                                style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Container(
+                            width: 8, height: 8,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF4CAF50),
+                              shape: BoxShape.circle,
+                              boxShadow: [BoxShadow(color: Color(0xFF4CAF50), blurRadius: 6, spreadRadius: 1)],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('SYSTEM ONLINE',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 12, letterSpacing: 2)),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const ListTile(
-                  leading: Icon(Icons.psychology, color: Color(0xFF4CAF50)),
-                  title: Text('Smart Intelligence: ACTIVE', style: TextStyle(color: Colors.white, fontSize: 13)),
-                  subtitle: Text('Auto-switching RAG & LLM', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                // Scrollable Content
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      Row(
+                        children: [
+                          _statusCard(context, 'Queries', apiService.queryCount.toString(), Icons.query_stats, const Color(0xFFFFC857)),
+                          const SizedBox(width: 12),
+                          _statusCard(context, 'RAG', 'ACTIVE', Icons.psychology, const Color(0xFF4CAF50)),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F1923),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white12),
+                        ),
+                        child: ThreatMonitor(threatLevel: apiService.threatLevel),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F1923),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.cloud_done, color: Color(0xFF2196F3), size: 20),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text('BACKEND', style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 1)),
+                                SizedBox(height: 2),
+                                Text('HuggingFace · 16GB · Online', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _menuTile(
+                        context,
+                        icon: Icons.history_edu,
+                        iconColor: const Color(0xFFFFC857),
+                        title: 'Mission Log History',
+                        subtitle: 'Locally saved conversations',
+                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Chat history auto-saved locally.')),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _menuTile(
+                        context,
+                        icon: Icons.auto_awesome,
+                        iconColor: const Color(0xFF4CAF50),
+                        title: 'Smart Intelligence',
+                        subtitle: 'Auto-switching RAG & LLM',
+                        onTap: () {},
+                      ),
+                      const SizedBox(height: 8),
+                      _menuTile(
+                        context,
+                        icon: Icons.delete_sweep_rounded,
+                        iconColor: const Color(0xFFFF5252),
+                        title: 'Clear Tactical Interface',
+                        subtitle: 'Wipe all chat history',
+                        onTap: () {
+                          apiService.clearChat(context);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.history, color: Color(0xFFFFC857)),
-                  title: const Text('Mission Log History', style: TextStyle(color: Colors.white)),
-                  subtitle: const Text('Local Persistence: Enabled', style: TextStyle(color: Colors.white54, fontSize: 11)),
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Chat history is automatically saved to local storage.')),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.delete_sweep, color: Color(0xFFFF5252)),
-                  title: const Text('Clear Tactical Interface', style: TextStyle(color: Colors.white)),
-                  onTap: () {
-                    apiService.clearChat(context);
-                    Navigator.pop(context);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: ThreatMonitor(threatLevel: apiService.threatLevel),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.cloud_done, color: Color(0xFF2196F3)),
-                  title: const Text('Cloud: HF 16GB Deployed', style: TextStyle(color: Colors.white)),
-                  onTap: () {},
-                ),
-                const Spacer(),
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'v1.1.0 — OPTIMIZED ROUTING',
-                    style: TextStyle(color: Colors.white38, fontSize: 12),
+                // Footer
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.white12)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('v1.2.0 — OPTIMIZED ROUTING',
+                        style: TextStyle(color: Colors.white38, fontSize: 10)),
+                      Icon(Icons.verified_user_outlined, color: Color(0xFF4CAF50), size: 14),
+                    ],
                   ),
                 ),
               ],
             );
-          }
+          },
         ),
       ),
       body: NeuralBackground(
