@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'api_service.dart';
+import 'widgets/neural_background.dart';
+import 'widgets/threat_monitor.dart';
 
 void main() {
   runApp(
@@ -124,10 +127,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     Navigator.pop(context);
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.security, color: Color(0xFF4CAF50)),
-                  title: Text('Threat Level: ${apiService.threatLevel.toStringAsFixed(1)}%', style: const TextStyle(color: Colors.white)),
-                  onTap: () {},
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: ThreatMonitor(threatLevel: apiService.threatLevel),
                 ),
                 ListTile(
                   leading: const Icon(Icons.cloud_done, color: Color(0xFF2196F3)),
@@ -147,21 +149,25 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         ),
       ),
-      body: Consumer<ApiService>(
-        builder: (context, apiService, _) {
-          return Column(
-            children: [
-              Expanded(
-                child: apiService.messages.isEmpty
-                    ? Center(
-                        child: Text(
-                          'Tactical Interface Ready\nAwaiting Command...',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF4CAF50).withOpacity(0.6),
+      body: NeuralBackground(
+        child: Consumer<ApiService>(
+          builder: (context, apiService, _) {
+            return Column(
+              children: [
+                Expanded(
+                  child: apiService.messages.isEmpty
+                      ? Center(
+                          child: Text(
+                            'Tactical Interface Ready\nAwaiting Command...',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: const Color(0xFF4CAF50).withOpacity(0.8),
+                              shadows: [
+                                Shadow(color: const Color(0xFF4CAF50).withOpacity(0.6), blurRadius: 10),
+                              ]
+                            ),
                           ),
-                        ),
-                      )
+                        )
                     : ListView.builder(
                         padding: const EdgeInsets.all(16),
                         reverse: false, // In a real app we might want to reverse or auto-scroll
@@ -175,24 +181,42 @@ class _ChatScreenState extends State<ChatScreen> {
                           
                           return Align(
                             alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF161F28),
-                                border: Border(
-                                  left: BorderSide(color: borderColor, width: isUser ? 0 : 3),
-                                  right: BorderSide(color: borderColor, width: isUser ? 3 : 0),
+                            child: TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(isUser ? 20 * (1 - value) : -20 * (1 - value), 0),
+                                  child: Opacity(
+                                    opacity: value,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(12),
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF161F28).withOpacity(0.85),
+                                  border: Border.all(color: borderColor.withOpacity(0.4), width: 1),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: borderColor.withOpacity(0.15),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    )
+                                  ],
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                msg.content,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  height: 1.4,
+                                child: Text(
+                                  msg.content,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ),
                             ),
@@ -204,10 +228,9 @@ class _ChatScreenState extends State<ChatScreen> {
               if (apiService.isLoading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: LinearProgressIndicator(
-                    backgroundColor: Color(0xFF161F28),
+                  child: SpinKitThreeBounce(
                     color: Color(0xFFFFC857),
-                    minHeight: 2,
+                    size: 20.0,
                   ),
                 ),
                 
