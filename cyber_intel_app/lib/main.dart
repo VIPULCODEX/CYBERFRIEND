@@ -152,7 +152,8 @@ class _ChatScreenState extends State<ChatScreen> {
       body: NeuralBackground(
         child: Consumer<ApiService>(
           builder: (context, apiService, _) {
-            return Column(
+            return SafeArea(
+              child: Column(
               children: [
                 Expanded(
                   child: apiService.messages.isEmpty
@@ -280,9 +281,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ],
-          );
-        },
-      ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
