@@ -1042,6 +1042,65 @@ header button span {
 /* ══════════════════════════════════════════════════════════════
    SIDEBAR TEXT COLOR OVERRIDE
    ══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   3D NEURAL NETWORK ANIMATION
+   ══════════════════════════════════════════════════════════════ */
+#neural-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    opacity: 0.4;
+}
+
+.welcome-section {
+    position: relative;
+    padding: var(--space-2xl) var(--space-xl);
+    border-radius: var(--radius-xl);
+    background: radial-gradient(circle at center, rgba(0, 255, 159, 0.05) 0%, transparent 70%);
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DASHBOARD THREAT MONITOR (PREMIUM)
+   ══════════════════════════════════════════════════════════════ */
+.dashboard-monitor {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+.monitor-card {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    position: relative;
+}
+.monitor-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+.monitor-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 8px 0;
+}
+.monitor-status {
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR TEXT COLOR OVERRIDE
+   ══════════════════════════════════════════════════════════════ */
 [data-testid="stSidebar"] * {
     color: var(--text-secondary) !important;
     font-family: 'Inter', sans-serif !important;
@@ -1514,13 +1573,13 @@ with st.sidebar:
 st.markdown("""
 <div class="cyber-header">
     <h1>🛡 QUANTX AI</h1>
-    <div class="subtitle">Real-Time Threat Intelligence & Cybersecurity Advisor</div>
+    <div class="subtitle">Neural Threat Intelligence & Cyber-Strategic Advisor</div>
     <div class="header-rule"></div>
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown(
-    '<div class="secure-bar">SECURE CHANNEL ESTABLISHED — ENCRYPTED SESSION ACTIVE</div>',
+    '<div class="secure-bar">SECURE CHANNEL ESTABLISHED — NEURAL OVERLAY ACTIVE</div>',
     unsafe_allow_html=True
 )
 
@@ -1541,13 +1600,13 @@ if not GROQ_API_KEY:
 
 if not st.session_state.pipeline_ready:
     loader_placeholder = st.empty()
-    loader_placeholder.markdown(render_cyber_loader("INITIALIZING NEURAL CORE"), unsafe_allow_html=True)
+    loader_placeholder.markdown(render_cyber_loader("SYNCHRONIZING NEURAL MATRIX"), unsafe_allow_html=True)
 
     try:
         assistant, rag = load_pipeline(st.session_state.top_k)
         st.session_state.assistant = assistant
         st.session_state.pipeline_ready = True
-        add_log("Neural core initialized successfully.", "info")
+        add_log("Neural matrix synchronized.", "info")
         loader_placeholder.empty()
     except ValueError as e:
         loader_placeholder.empty()
@@ -1576,22 +1635,112 @@ if not st.session_state.pipeline_ready:
 tab1, tab2, tab3 = st.tabs(["💬 CHAT & INTEL", "🔍 SYSTEM ANALYSIS", "🛡️ SECURITY AUDIT"])
 
 with tab1:
+    # ── Dashboard Threat Monitor (Restored) ──
+    level = st.session_state.threat_level
+    if level < 30: t_c = "#4CAF50"; t_l = "STABLE"; t_msg = "No immediate threats detected in neural matrix."
+    elif level < 60: t_c = "#FFC857"; t_l = "ELEVATED"; t_msg = "Suspicious network patterns identified."
+    else: t_c = "#FF3D5A"; t_l = "CRITICAL"; t_msg = "Active intrusion attempt simulated or detected!"
+
+    st.markdown(f"""
+    <div class="dashboard-monitor">
+        <div class="monitor-card" style="border-left: 3px solid {t_c};">
+            <div class="monitor-label">GLOBAL THREAT SCORE</div>
+            <div class="monitor-value" style="color:{t_c};">{level}%</div>
+            <div class="monitor-status" style="color:{t_c}aa;">STATUS: {t_l}</div>
+        </div>
+        <div class="monitor-card" style="border-left: 3px solid var(--info-blue);">
+            <div class="monitor-label">KNOWLEDGE MATRIX</div>
+            <div class="monitor-value" style="color:var(--info-blue);">ACTIVE</div>
+            <div class="monitor-status" style="color:var(--info-blue)aa;">VERIFIED TIER-3 RAG</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     # ── Chat History ──
     current_chat = st.session_state.chats[st.session_state.current_chat_id]
     messages = current_chat["messages"]
 
     if not messages:
-        st.markdown("""
+        # Initial 3D Animation Component
+        st.components.v1.html("""
+            <canvas id="neural-canvas"></canvas>
+            <script>
+                const canvas = document.getElementById('neural-canvas');
+                const ctx = canvas.getContext('2d');
+                let width, height, nodes = [], links = [];
+
+                function init() {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = 400;
+                    nodes = [];
+                    for (let i = 0; i < 60; i++) {
+                        nodes.push({
+                            x: Math.random() * width,
+                            y: Math.random() * height,
+                            vx: (Math.random() - 0.5) * 0.5,
+                            vy: (Math.random() - 0.5) * 0.5,
+                            r: Math.random() * 2 + 1
+                        });
+                    }
+                }
+
+                function draw() {
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.strokeStyle = 'rgba(0, 255, 159, 0.15)';
+                    ctx.fillStyle = 'rgba(0, 255, 159, 0.7)';
+                    
+                    nodes.forEach(node => {
+                        node.x += node.vx;
+                        node.y += node.vy;
+                        if (node.x < 0 || node.x > width) node.vx *= -1;
+                        if (node.y < 0 || node.y > height) node.vy *= -1;
+                        
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+
+                    for (let i = 0; i < nodes.length; i++) {
+                        for (let j = i + 1; j < nodes.length; j++) {
+                            const dx = nodes[i].x - nodes[j].x;
+                            const dy = nodes[i].y - nodes[j].y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 150) {
+                                ctx.lineWidth = (1 - dist / 150) * 0.8;
+                                ctx.beginPath();
+                                ctx.moveTo(nodes[i].x, nodes[i].y);
+                                ctx.lineTo(nodes[j].x, nodes[j].y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    requestAnimationFrame(draw);
+                }
+
+                window.addEventListener('resize', init);
+                init();
+                draw();
+            </script>
+            <style>
+                body { margin: 0; background: transparent; overflow: hidden; }
+                #neural-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+            </style>
+        """, height=250)
+
+        st.markdown(f"""
         <div class="welcome-card">
-            <div class="welcome-title">SYSTEM READY — AWAITING OPERATOR INPUT</div>
-            <div>Welcome, operator. I am QuantX, your AI intelligence advisor.</div>
+            <div class="welcome-title">QUANTX CORE v2.5 — NEURAL INTERFACE READY</div>
+            <div style="font-size: 0.95rem; font-weight: 500; color:var(--text-primary);">Awaiting tactical query from operator...</div>
+            <div style="margin-top: 10px; color:var(--text-secondary); line-height: 1.6;">
+                QuantX is your hyper-tuned AI strategist. Whether analyzing zero-day threats or solving complex programming challenges, I provide high-fidelity intelligence.
+            </div>
             <br>
-            <div class="capability">Explain any concept or solve complex tasks</div>
-            <div class="capability">Specialized cybersecurity & threat analysis</div>
-            <div class="capability">Real-time intel & incident reporting</div>
-            <div class="capability">System vulnerability assessment</div>
+            <div class="capability">Multi-Tier RAG Analysis (CISA, MITRE, NVD)</div>
+            <div class="capability">PhishSense Phishing Detection (LoRA Optimized)</div>
+            <div class="capability">Strategic Incident Response Guidance</div>
+            <div class="capability">Kernel-Level Vulnerability Assessment (Roadmap)</div>
             <br>
-            <div class="hint">Type your query below or select from the sidebar →</div>
+            <div class="hint" style="font-family:'JetBrains Mono';">// {t_msg}</div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -1606,7 +1755,7 @@ with tab1:
     if "pending_query" in st.session_state:
         user_input = st.session_state.pop("pending_query")
     else:
-        user_input = st.chat_input("Enter query — I can help with security or any general task...")
+        user_input = st.chat_input("Enter tactical query — Neural Core is listening...")
 
     if user_input:
         assistant = st.session_state.assistant
@@ -1616,9 +1765,9 @@ with tab1:
         st.session_state.threat_level = min(95, max(10, st.session_state.threat_level + random.randint(-5, 8)))
         if any(w in user_input.lower() for w in ["hack", "attack", "breach", "malware", "ransomware"]):
             st.session_state.threat_level = min(100, st.session_state.threat_level + 15)
-            add_log(f"Suspicious pattern detected.", "warn")
+            add_log(f"Anomalous query pattern detected.", "warn")
         else:
-            add_log(f"Processing query...", "info")
+            add_log(f"Processing neural query...", "info")
         
         # Store user message
         messages.append({"role": "user", "content": user_input, "type": "user"})
@@ -1646,10 +1795,10 @@ with tab1:
 
         try:
             response = assistant.respond(last_query, use_rag=use_rag)
-            add_log("Intelligence retrieved.", "info")
+            add_log("Strategic intel retrieved.", "info")
         except Exception as e:
-            response = f"[ERROR] Secure link failed: {str(e)}"
-            add_log(f"Query error.", "error")
+            response = f"[ERROR] Neural link desynchronized: {str(e)}"
+            add_log(f"Query failure.", "error")
 
         loader_slot.empty()
 
@@ -1672,6 +1821,35 @@ with tab1:
 
         st.rerun()
 
+
+with tab2:
+    st.markdown('<div class="sidebar-title" style="font-size:0.95rem; margin-bottom:12px;">🔍 SYSTEM SECURITY ANALYSIS</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="font-size: 0.82rem; color:var(--text-secondary); margin-bottom: 20px;">
+        Provide your system parameters below for a specialized security assessment based on current threat vectors.
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.form("analysis_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            os_val = st.text_input("Operating System", placeholder="e.g., Windows 11 Home, Ubuntu 22.04")
+            browser_val = st.text_input("Primary Browser", placeholder="e.g., Chrome v120, Firefox")
+        with col2:
+            av_val = st.text_input("Security Software", placeholder="e.g., Windows Defender, SentinelOne")
+            activity_val = st.text_area("Suspicious Activity Observed", placeholder="e.g., slow performance, popups, unknown processes")
+        
+        submitted = st.form_submit_button("INITIALIZE ANALYSIS")
+        
+        if submitted:
+            if not all([os_val, browser_val, av_val, activity_val]):
+                st.warning("Please fill all parameters for a complete analysis.")
+            else:
+                with st.spinner("QUANTX IS ANALYZING SYSTEM PARAMETERS..."):
+                    result = st.session_state.assistant.analyze_system(os_val, browser_val, av_val, activity_val)
+                    st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
+                    st.markdown(result)
+                    add_log("System analysis report generated.", "info")
 
 with tab3:
     st.markdown('<div class="sidebar-title" style="font-size:0.85rem; margin-bottom:12px;">// REAL-TIME SECURITY PARAMETERS</div>', unsafe_allow_html=True)
@@ -1709,4 +1887,4 @@ with tab3:
     
     st.markdown('<div class="section-divider"></div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-title" style="font-size:0.75rem;">// CRYPTOGRAPHIC ATTESTATION</div>', unsafe_allow_html=True)
-    st.info("QuantX uses localized RAG processing. No third-party data crawling or telemetry is enabled in this deployment.")
+    st.info("QuantX uses specialized neural processing. No third-party data crawling or telemetry is enabled in this deployment.")
