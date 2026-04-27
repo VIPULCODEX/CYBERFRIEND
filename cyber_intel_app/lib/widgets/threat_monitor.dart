@@ -55,7 +55,6 @@ class ThreatMonitor extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.5),
                 blurRadius: 4,
-                inset: true,
               )
             ]
           ),
