@@ -25,6 +25,11 @@ faiss_index/
 .DS_Store
 Thumbs.db
 
+# ─── Local-only docs (keep locally, not on GitHub) ─
+PROJECT_LOG.txt
+README.md
+ROLLBACK_GUIDE.md
+
 # ─── Mobile / Flutter ────────────────────
 cyber_intel_app/.dart_tool/
 cyber_intel_app/build/
